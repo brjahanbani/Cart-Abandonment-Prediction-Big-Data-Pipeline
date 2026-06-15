@@ -1,0 +1,9 @@
+# Large data files — too big for GitHub (>100 MB)
+events_clean.csv
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.env
+venv/
