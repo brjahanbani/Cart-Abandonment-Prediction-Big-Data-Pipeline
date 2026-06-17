@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cart Abandonment · Live Pipeline Monitor</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+  :root {
+    --bg:       #06090F;
+    --surface:  #0D1420;
+    --surface2: #111928;
+    --border:   rgba(255,255,255,0.07);
+    --kafka:    #00D4AA;
+    --kafka-d:  #007A62;
+    --spark:    #4F9EFF;
+    --spark-d:  #1A5FAA;
+    --lstm:     #A78BFA;
+    --lstm-d:   #5B3FAA;
+    --success:  #39D353;
+    --danger:   #FF6B6B;
+    --text:     #E1E7F0;
+    --muted:    #5B6B84;
+    --mono:     'JetBrains Mono', 'Courier New', monospace;
+    --sans:     'Inter', system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── HEADER ───────────────────────────────────────────────────── */
+  .hdr {
+    background: linear-gradient(135deg, #0A1628 0%, #0D1F3C 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-shrink: 0;
+  }
+  .hdr-left { display: flex; align-items: center; gap: 14px; }
+  .hdr-logo {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--kafka), var(--spark));
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .hdr-title { font-size: 15px; font-weight: 600; color: #fff; letter-spacing: -0.3px; }
+  .hdr-sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
+  .hdr-status { display: flex; align-items: center; gap: 20px; }
+  .status-pill {
+    display: flex; align-items: center; gap: 6px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 11.5px; font-weight: 500;
+  }
+  .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+  .dot.green { background: var(--success); box-shadow: 0 0 6px var(--success); }
+  .dot.teal  { background: var(--kafka);   box-shadow: 0 0 6px var(--kafka); }
+  .dot.blue  { background: var(--spark);   box-shadow: 0 0 6px var(--spark); }
+  .dot.purple{ background: var(--lstm);    box-shadow: 0 0 6px var(--lstm); }
+  .dot.gray  { background: #444; animation: none; }
+  @keyframes pulse {
+    0%,100% { opacity: 1; transform: scale(1); }
+    50%      { opacity: 0.5; transform: scale(0.8); }
+  }
+  .controls { display: flex; gap: 8px; }
+  .btn {
+    padding: 7px 16px; border-radius: 8px; border: none;
+    font-family: var(--sans); font-size: 12px; font-weight: 600;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .btn-start { background: var(--kafka); color: #000; }
+  .btn-start:hover { filter: brightness(1.15); }
+  .btn-pause { background: rgba(255,255,255,0.1); color: var(--text); }
+  .btn-pause:hover { background: rgba(255,255,255,0.15); }
+  .btn-reset { background: rgba(255,100,100,0.15); color: var(--danger); }
+  .btn-reset:hover { background: rgba(255,100,100,0.25); }
+
+  /* ── PIPELINE SUMMARY BAR ─────────────────────────────────────── */
+  .flow-bar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 24px;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    flex-shrink: 0;
+  }
+  .flow-node {
+    display: flex; align-items: center; gap: 6px;
+    padding: 4px 12px; border-radius: 6px;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.5px;
+  }
+  .fn-k { background: rgba(0,212,170,0.12); color: var(--kafka); border: 1px solid rgba(0,212,170,0.3); }
+  .fn-s { background: rgba(79,158,255,0.12); color: var(--spark); border: 1px solid rgba(79,158,255,0.3); }
+  .fn-m { background: rgba(0,180,100,0.12);  color: #2DB57E; border: 1px solid rgba(0,180,100,0.3); }
+  .fn-l { background: rgba(167,139,250,0.12);color: var(--lstm); border: 1px solid rgba(167,139,250,0.3); }
+  .flow-arrow { color: var(--muted); font-size: 13px; }
+  .flow-arrow.active { color: var(--kafka); animation: blink 0.8s ease-in-out infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+  .flow-stat { font-size: 10px; color: var(--muted); margin-left: 2px; }
+
+  /* ── MAIN GRID ────────────────────────────────────────────────── */
+  .main {
+    flex: 1; display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1px; background: var(--border);
+    min-height: 0;
+  }
+
+  /* ── PANEL ────────────────────────────────────────────────────── */
+  .panel { background: var(--bg); display: flex; flex-direction: column; min-height: 0; }
+
+  .panel-hdr {
+    padding: 14px 18px 10px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px;
+    flex-shrink: 0;
+  }
+  .panel-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; flex-shrink: 0;
+  }
+  .pi-k { background: rgba(0,212,170,0.15); }
+  .pi-s { background: rgba(79,158,255,0.15); }
+  .pi-l { background: rgba(167,139,250,0.15); }
+
+  .panel-hdr-text { flex: 1; min-width: 0; }
+  .panel-title { font-size: 13px; font-weight: 600; color: #fff; }
+  .panel-sub { font-size: 10.5px; color: var(--muted); margin-top: 1px; }
+
+  /* ── STAT GRID ────────────────────────────────────────────────── */
+  .stats-row {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 8px; padding: 10px 14px;
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .stat-box {
+    background: var(--surface);
+    border-radius: 8px; padding: 8px 10px;
+  }
+  .stat-val {
+    font-family: var(--mono); font-size: 17px; font-weight: 700;
+    color: #fff; letter-spacing: -0.5px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .stat-lbl { font-size: 9.5px; color: var(--muted); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* ── PROGRESS BAR ─────────────────────────────────────────────── */
+  .prog-wrap { padding: 8px 14px; flex-shrink: 0; }
+  .prog-label { display: flex; justify-content: space-between; font-size: 10px; color: var(--muted); margin-bottom: 4px; }
+  .prog-track { height: 4px; background: var(--surface2); border-radius: 4px; overflow: hidden; }
+  .prog-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
+  .pf-k { background: linear-gradient(90deg, var(--kafka-d), var(--kafka)); }
+  .pf-s { background: linear-gradient(90deg, var(--spark-d), var(--spark)); }
+  .pf-l { background: linear-gradient(90deg, var(--lstm-d), var(--lstm)); }
+
+  /* ── LOG AREA ─────────────────────────────────────────────────── */
+  .log-hdr {
+    padding: 6px 14px 4px;
+    font-size: 9.5px; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.7px;
+    flex-shrink: 0;
+  }
+  .log-area {
+    flex: 1; overflow-y: auto; padding: 4px 14px 12px;
+    font-family: var(--mono); font-size: 11px; line-height: 1.8;
+    min-height: 0;
+  }
+  .log-area::-webkit-scrollbar { width: 4px; }
+  .log-area::-webkit-scrollbar-track { background: transparent; }
+  .log-area::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+
+  .log-line { display: flex; align-items: baseline; gap: 8px; padding: 1.5px 0; }
+  .log-ts { color: #2D3F55; font-size: 9.5px; flex-shrink: 0; }
+  .log-txt { color: #8899AA; flex: 1; word-break: break-all; }
+  .log-line.new .log-txt { color: var(--text); animation: fadeIn 0.4s ease; }
+  .log-line.success .log-txt { color: var(--success); }
+  .log-line.info .log-txt { color: var(--kafka); }
+  .log-line.spark .log-txt { color: var(--spark); }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(3px)} to{opacity:1;transform:none} }
+
+  /* ── PREDICTION ROWS ──────────────────────────────────────────── */
+  .pred-hdr-row {
+    display: grid; grid-template-columns: 1fr 52px 68px 90px;
+    padding: 5px 14px;
+    font-size: 9.5px; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .pred-area {
+    flex: 1; overflow-y: auto; min-height: 0;
+    padding: 4px 14px 12px;
+  }
+  .pred-area::-webkit-scrollbar { width: 4px; }
+  .pred-area::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+
+  .pred-row {
+    display: grid; grid-template-columns: 1fr 52px 68px 90px;
+    padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.03);
+    font-family: var(--mono); font-size: 10.5px;
+    animation: slideIn 0.35s ease;
+  }
+  @keyframes slideIn { from{opacity:0;transform:translateX(-8px)} to{opacity:1;transform:none} }
+  .pred-key { color: #5B8BCC; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pred-events { color: var(--muted); text-align: right; padding-right: 8px; }
+  .pred-prob { text-align: right; padding-right: 8px; }
+  .pred-label { font-weight: 600; }
+  .purchase { color: var(--success); }
+  .abandon  { color: #3D4F62; }
+  .pred-prob.high { color: var(--success); }
+  .pred-prob.low  { color: var(--muted); }
+
+  /* ── BOTTOM BAR ───────────────────────────────────────────────── */
+  .btm {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 10px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; flex-shrink: 0;
+  }
+  .btm-stats { display: flex; gap: 28px; }
+  .btm-stat { }
+  .btm-val { font-family: var(--mono); font-size: 16px; font-weight: 700; color: #fff; }
+  .btm-lbl { font-size: 9.5px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 1px; }
+  .btm-val.teal   { color: var(--kafka); }
+  .btm-val.blue   { color: var(--spark); }
+  .btm-val.purple { color: var(--lstm); }
+  .btm-val.green  { color: var(--success); }
+
+  /* ── EMPTY / IDLE STATE ───────────────────────────────────────── */
+  .idle-msg {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 8px;
+    color: var(--muted); font-size: 12px;
+    padding: 20px;
+  }
+  .idle-icon { font-size: 28px; opacity: 0.3; }
+
+  /* ── RESPONSIVE ───────────────────────────────────────────────── */
+  @media (max-width: 900px) {
+    .main { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ──────────────────────────────────────────────────── -->
+<div class="hdr">
+  <div class="hdr-left">
+    <div class="hdr-logo">⚡</div>
+    <div>
+      <div class="hdr-title">Cart Abandonment · Live Pipeline Monitor</div>
+      <div class="hdr-sub">Kafka · Spark · MongoDB · Hybrid LSTM</div>
+    </div>
+  </div>
+  <div class="hdr-status">
+    <div class="status-pill"><span class="dot" id="dot-k"></span><span id="status-k">Idle</span></div>
+    <div class="status-pill"><span class="dot" id="dot-s"></span><span id="status-s">Idle</span></div>
+    <div class="status-pill"><span class="dot" id="dot-l"></span><span id="status-l">Idle</span></div>
+  </div>
+  <div class="controls">
+    <button class="btn btn-start" onclick="startDemo()">▶ Start Demo</button>
+    <button class="btn btn-pause" onclick="pauseDemo()">⏸ Pause</button>
+    <button class="btn btn-reset" onclick="resetDemo()">↺ Reset</button>
+  </div>
+</div>
+
+<!-- ── FLOW BAR ─────────────────────────────────────────────────── -->
+<div class="flow-bar">
+  <div class="flow-node fn-k">⚡ KAFKA</div>
+  <span class="flow-arrow" id="arr1">→</span>
+  <div class="flow-node fn-s">⚙ SPARK</div>
+  <span class="flow-arrow" id="arr2">→</span>
+  <div class="flow-node fn-m">🍃 MONGODB</div>
+  <span class="flow-arrow" id="arr3">→</span>
+  <div class="flow-node fn-l">🧠 LSTM</div>
+  <span class="flow-stat" id="flow-summary">Pipeline not started</span>
+</div>
+
+<!-- ── MAIN GRID ──────────────────────────────────────────────── -->
+<div class="main">
+
+  <!-- KAFKA PANEL -->
+  <div class="panel">
+    <div class="panel-hdr">
+      <div class="panel-icon pi-k">⚡</div>
+      <div class="panel-hdr-text">
+        <div class="panel-title" style="color:var(--kafka)">L1 · Kafka Producer</div>
+        <div class="panel-sub">events_clean.csv → session-events topic</div>
+      </div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="stat-val" id="k-events">0</div>
+        <div class="stat-lbl">Events Sent</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val" id="k-speed" style="color:var(--kafka)">— ev/s</div>
+        <div class="stat-lbl">Throughput</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val" id="k-pct">0.0%</div>
+        <div class="stat-lbl">Progress</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val" id="k-topic" style="color:var(--kafka);font-size:12px">9092</div>
+        <div class="stat-lbl">Kafka Port</div>
+      </div>
+    </div>
+    <div class="prog-wrap">
+      <div class="prog-label">
+        <span>Events streamed</span>
+        <span id="k-pct2">0 / 2,755,610</span>
+      </div>
+      <div class="prog-track"><div class="prog-fill pf-k" id="k-bar" style="width:0%"></div></div>
+    </div>
+    <div class="log-hdr">Stream Log</div>
+    <div class="log-area" id="k-log">
+      <div class="idle-msg">
+        <div class="idle-icon">⚡</div>
+        <div>Waiting for demo start…</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SPARK PANEL -->
+  <div class="panel">
+    <div class="panel-hdr">
+      <div class="panel-icon pi-s">⚙</div>
+      <div class="panel-hdr-text">
+        <div class="panel-title" style="color:var(--spark)">L2 · Spark Consumer</div>
+        <div class="panel-sub">Kafka → Session features → MongoDB</div>
+      </div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="stat-val" id="s-batches">0</div>
+        <div class="stat-lbl">Batches Run</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val" id="s-sessions" style="color:var(--spark)">0</div>
+        <div class="stat-lbl">Sessions Stored</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val" id="s-evperb">—</div>
+        <div class="stat-lbl">Events / Batch</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val" id="s-port" style="color:var(--spark);font-size:12px">27017</div>
+        <div class="stat-lbl">MongoDB Port</div>
+      </div>
+    </div>
+    <div class="prog-wrap">
+      <div class="prog-label">
+        <span>Sessions written to MongoDB</span>
+        <span id="s-pct">0%</span>
+      </div>
+      <div class="prog-track"><div class="prog-fill pf-s" id="s-bar" style="width:0%"></div></div>
+    </div>
+    <div class="log-hdr">Processing Log</div>
+    <div class="log-area" id="s-log">
+      <div class="idle-msg">
+        <div class="idle-icon">⚙</div>
+        <div>Waiting for Kafka events…</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LSTM PANEL -->
+  <div class="panel">
+    <div class="panel-hdr">
+      <div class="panel-icon pi-l">🧠</div>
+      <div class="panel-hdr-text">
+        <div class="panel-title" style="color:var(--lstm)">L4 · LSTM Live Scorer</div>
+        <div class="panel-sub">MongoDB → Hybrid LSTM → Predictions</div>
+      </div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="stat-val" id="l-scored">0</div>
+        <div class="stat-lbl">Sessions Scored</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val" id="l-purchase" style="color:var(--success)">0</div>
+        <div class="stat-lbl">PURCHASE ✓</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val" id="l-pct" style="color:var(--lstm)">0%</div>
+        <div class="stat-lbl">Purchase Rate</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val" id="l-threshold" style="color:var(--lstm);font-size:13px">0.50</div>
+        <div class="stat-lbl">Threshold</div>
+      </div>
+    </div>
+    <div class="prog-wrap">
+      <div class="prog-label">
+        <span>Prediction confidence avg</span>
+        <span id="l-conf">—</span>
+      </div>
+      <div class="prog-track"><div class="prog-fill pf-l" id="l-bar" style="width:35%"></div></div>
+    </div>
+    <div class="pred-hdr-row">
+      <span>Session Key</span>
+      <span style="text-align:right">Events</span>
+      <span style="text-align:right">P(buy)</span>
+      <span>Prediction</span>
+    </div>
+    <div class="pred-area" id="l-log">
+      <div class="idle-msg">
+        <div class="idle-icon">🧠</div>
+        <div>Waiting for MongoDB sessions…</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── BOTTOM BAR ──────────────────────────────────────────────── -->
+<div class="btm">
+  <div class="btm-stats">
+    <div class="btm-stat">
+      <div class="btm-val teal" id="b-events">0</div>
+      <div class="btm-lbl">Total Events</div>
+    </div>
+    <div class="btm-stat">
+      <div class="btm-val blue" id="b-sessions">0</div>
+      <div class="btm-lbl">Sessions in MongoDB</div>
+    </div>
+    <div class="btm-stat">
+      <div class="btm-val purple" id="b-scored">0</div>
+      <div class="btm-lbl">Predictions Made</div>
+    </div>
+    <div class="btm-stat">
+      <div class="btm-val green" id="b-purchase">0</div>
+      <div class="btm-lbl">PURCHASE Alerts</div>
+    </div>
+  </div>
+  <div style="font-size:11px;color:var(--muted);text-align:right">
+    <div>Retail Rocket Dataset · 2015</div>
+    <div style="margin-top:2px">Babak Rad Jahanbani · Big Data & AI</div>
+  </div>
+</div>
+
+<script>
+// ── State ────────────────────────────────────────────────────────
+const MAX_EVENTS = 2755610;
+const MAX_SESSIONS = 1523895;
+let state = {
+  running: false,
+  evCount: 0, evSpeed: 0,
+  batches: 0, sessions: 0,
+  scored: 0, purchased: 0,
+  probSum: 0,
+  tickers: [],
+};
+
+// ── Helpers ──────────────────────────────────────────────────────
+const fmt = n => n.toLocaleString();
+const now = () => {
+  const d = new Date();
+  return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`;
+};
+const rand = (a,b) => Math.floor(Math.random()*(b-a+1))+a;
+const randF = (a,b,dp=1) => parseFloat((Math.random()*(b-a)+a).toFixed(dp));
+
+function sessionKey() {
+  const prefixes = [1041, 1004, 1282, 7654, 3341, 9901, 5512, 4421, 6633, 2287, 8890];
+  const vis = prefixes[rand(0,prefixes.length-1)]*1000 + rand(100,999);
+  return `${vis}_${rand(1,5)}`;
+}
+
+// ── DOM helpers ─────────────────────────────────────────────────
+function setDot(id, cls) {
+  const el = document.getElementById(id);
+  el.className = 'dot ' + cls;
+}
+function setText(id, v) {
+  const el = document.getElementById(id);
+  if(el) el.textContent = v;
+}
+
+function addKafkaLine(txt, cls='') {
+  const log = document.getElementById('k-log');
+  const firstMsg = log.querySelector('.idle-msg');
+  if(firstMsg) firstMsg.remove();
+  const line = document.createElement('div');
+  line.className = 'log-line new ' + cls;
+  line.innerHTML = `<span class="log-ts">${now()}</span><span class="log-txt">${txt}</span>`;
+  log.appendChild(line);
+  setTimeout(()=>line.classList.remove('new'), 500);
+  log.scrollTop = log.scrollHeight;
+  if(log.children.length > 80) log.children[0].remove();
+}
+
+function addSparkLine(txt, cls='') {
+  const log = document.getElementById('s-log');
+  const firstMsg = log.querySelector('.idle-msg');
+  if(firstMsg) firstMsg.remove();
+  const line = document.createElement('div');
+  line.className = 'log-line new ' + cls;
+  line.innerHTML = `<span class="log-ts">${now()}</span><span class="log-txt">${txt}</span>`;
+  log.appendChild(line);
+  setTimeout(()=>line.classList.remove('new'), 500);
+  log.scrollTop = log.scrollHeight;
+  if(log.children.length > 80) log.children[0].remove();
+}
+
+function addPrediction(key, evts, prob) {
+  const log = document.getElementById('l-log');
+  const firstMsg = log.querySelector('.idle-msg');
+  if(firstMsg) firstMsg.remove();
+
+  const isPurchase = prob >= 0.5;
+  const probPct = (prob*100).toFixed(1) + '%';
+  const label = isPurchase
+    ? '<span class="pred-label purchase">PURCHASE ✓</span>'
+    : '<span class="pred-label abandon" style="color:#3D5872">abandon  ✗</span>';
+  const probCls = isPurchase ? 'high' : 'low';
+
+  const row = document.createElement('div');
+  row.className = 'pred-row';
+  row.innerHTML = `
+    <span class="pred-key">${key}</span>
+    <span class="pred-events">${evts}</span>
+    <span class="pred-prob ${probCls}">${probPct}</span>
+    <span>${label}</span>
+  `;
+  log.insertBefore(row, log.firstChild);
+  if(log.children.length > 100) log.lastChild.remove();
+}
+
+// ── Kafka simulation ─────────────────────────────────────────────
+function tickKafka() {
+  if(!state.running || state.evCount >= MAX_EVENTS) return;
+
+  const chunkBase = rand(7000, 12000);
+  const newCount = Math.min(state.evCount + chunkBase, MAX_EVENTS);
+  state.evCount = newCount;
+  state.evSpeed = rand(750, 950);
+
+  const pct = (newCount / MAX_EVENTS * 100);
+
+  // Every 10k milestones add a log line
+  if(newCount % 10000 < chunkBase || newCount === MAX_EVENTS) {
+    const milestone = Math.floor(newCount/10000)*10000;
+    addKafkaLine(
+      `${fmt(milestone)} events sent  |  ${pct.toFixed(1)}%  |  ${state.evSpeed} ev/sec`,
+      ''
+    );
+  }
+
+  setText('k-events', fmt(newCount));
+  setText('k-speed', state.evSpeed + ' ev/s');
+  setText('k-pct', pct.toFixed(1) + '%');
+  setText('k-pct2', fmt(newCount) + ' / 2,755,610');
+  document.getElementById('k-bar').style.width = Math.min(pct, 100) + '%';
+  setText('b-events', fmt(newCount));
+
+  if(newCount >= MAX_EVENTS) {
+    addKafkaLine('✓ All 2,755,610 events sent successfully.', 'success');
+    setDot('dot-k', 'green');
+    setText('status-k', 'Complete');
+  }
+}
+
+// ── Spark simulation ─────────────────────────────────────────────
+let sparkDelay = 0;
+function tickSpark() {
+  if(!state.running) return;
+  sparkDelay++;
+  if(sparkDelay < 5) return; // let kafka get ahead first
+  if(state.sessions >= MAX_SESSIONS) return;
+
+  state.batches++;
+  const evBatch = rand(250000, 450000);
+  const sessBatch = rand(95000, 130000);
+  const newSessions = Math.min(state.sessions + sessBatch, MAX_SESSIONS);
+  state.sessions = newSessions;
+  const docs = sessBatch;
+  const pct = newSessions / MAX_SESSIONS * 100;
+
+  addSparkLine(`Batch ${state.batches}  |  ${fmt(evBatch)} events from Kafka`, 'spark');
+  addSparkLine(`→ ${fmt(sessBatch)} sessions aggregated`);
+  addSparkLine(`→ ${fmt(docs)} documents upserted to MongoDB ✓`, 'success');
+
+  setText('s-batches', state.batches);
+  setText('s-sessions', fmt(newSessions));
+  setText('s-evperb', fmt(evBatch));
+  setText('s-pct', pct.toFixed(1) + '%');
+  document.getElementById('s-bar').style.width = Math.min(pct, 100) + '%';
+  setText('b-sessions', fmt(newSessions));
+
+  if(newSessions >= MAX_SESSIONS) {
+    addSparkLine('✓ All sessions written to MongoDB.', 'success');
+    setDot('dot-s', 'green');
+    setText('status-s', 'Complete');
+  }
+}
+
+// ── LSTM simulation ───────────────────────────────────────────────
+let lstmDelay = 0;
+function tickLSTM() {
+  if(!state.running) return;
+  lstmDelay++;
+  if(lstmDelay < 8) return;
+
+  const batchSize = rand(3, 8);
+  for(let i = 0; i < batchSize; i++) {
+    const key = sessionKey();
+    const evts = rand(1, 28);
+    let prob;
+    const roll = Math.random();
+    if(evts === 1)        prob = randF(0.34, 0.39, 3);
+    else if(roll < 0.18)  prob = randF(0.51, 0.78, 3); // PURCHASE
+    else                  prob = randF(0.27, 0.49, 3); // abandon
+
+    state.scored++;
+    state.probSum += prob;
+    if(prob >= 0.5) state.purchased++;
+
+    addPrediction(key, evts, prob);
+  }
+
+  const pct = state.scored > 0 ? (state.purchased/state.scored*100).toFixed(1)+'%' : '0%';
+  const avgConf = state.scored > 0 ? (state.probSum/state.scored*100).toFixed(1)+'%' : '—';
+  setText('l-scored', fmt(state.scored));
+  setText('l-purchase', fmt(state.purchased));
+  setText('l-pct', pct);
+  setText('l-conf', avgConf);
+  setText('b-scored', fmt(state.scored));
+  setText('b-purchase', fmt(state.purchased));
+  document.getElementById('l-bar').style.width = Math.min(parseFloat(avgConf)||35, 100) + '%';
+}
+
+// ── Arrow animation ───────────────────────────────────────────────
+let arrowTick = 0;
+function tickArrows() {
+  if(!state.running) return;
+  arrowTick++;
+  const a1 = document.getElementById('arr1');
+  const a2 = document.getElementById('arr2');
+  const a3 = document.getElementById('arr3');
+  a1.className = 'flow-arrow' + (state.evCount > 0 ? ' active' : '');
+  a2.className = 'flow-arrow' + (state.sessions > 0 ? ' active' : '');
+  a3.className = 'flow-arrow' + (state.scored > 0 ? ' active' : '');
+  setText('flow-summary',
+    state.scored > 0
+    ? `${fmt(state.evCount)} events → ${fmt(state.sessions)} sessions → ${fmt(state.scored)} predictions`
+    : 'Pipeline running…'
+  );
+}
+
+// ── Main loop ─────────────────────────────────────────────────────
+function mainLoop() {
+  tickKafka();
+  tickSpark();
+  tickLSTM();
+  tickArrows();
+}
+
+// ── Controls ──────────────────────────────────────────────────────
+function startDemo() {
+  if(state.running) return;
+  state.running = true;
+
+  setDot('dot-k', 'teal'); setText('status-k', 'Streaming');
+  setDot('dot-s', 'blue'); setText('status-s', 'Processing');
+  setDot('dot-l', 'purple'); setText('status-l', 'Scoring');
+
+  addKafkaLine('[1/2] Loading events_clean.csv...', '');
+  setTimeout(()=>{
+    addKafkaLine('  2,755,610 events loaded.', 'success');
+    addKafkaLine('  Date range: 2015-05-03 → 2015-09-18', '');
+    addKafkaLine('[2/2] Connected to localhost:9092', 'info');
+    addKafkaLine('  Sending events... (speed: 999999x)', '');
+  }, 400);
+
+  setTimeout(()=>{
+    addSparkLine('Spark session started (PySpark 3.5.0)', '');
+    addSparkLine('Kafka connector resolved. Listening on session-events', 'spark');
+    addSparkLine('Batch polling every 10s. MongoDB: localhost:27017', '');
+  }, 1800);
+
+  state.tickers.push(setInterval(mainLoop, 800));
+}
+
+function pauseDemo() {
+  state.running = !state.running;
+  const btn = document.querySelector('.btn-pause');
+  if(state.running) {
+    btn.textContent = '⏸ Pause';
+    setDot('dot-k', 'teal'); setDot('dot-s', 'blue'); setDot('dot-l', 'purple');
+  } else {
+    btn.textContent = '▶ Resume';
+    setDot('dot-k', 'gray'); setDot('dot-s', 'gray'); setDot('dot-l', 'gray');
+  }
+}
+
+function resetDemo() {
+  state.tickers.forEach(clearInterval);
+  state = { running:false, evCount:0, evSpeed:0, batches:0, sessions:0,
+            scored:0, purchased:0, probSum:0, tickers:[] };
+  sparkDelay = 0; lstmDelay = 0; arrowTick = 0;
+
+  ['k-events','k-speed','k-pct','s-batches','s-sessions','s-evperb',
+   'l-scored','l-purchase','l-pct','b-events','b-sessions','b-scored','b-purchase']
+    .forEach(id=>setText(id, id.includes('speed')?'— ev/s':'0'));
+
+  setText('k-pct2', '0 / 2,755,610');
+  setText('s-pct', '0%');
+  setText('l-conf', '—');
+  setText('flow-summary', 'Pipeline not started');
+  document.getElementById('k-bar').style.width = '0';
+  document.getElementById('s-bar').style.width = '0';
+  document.getElementById('l-bar').style.width = '35%';
+
+  ['dot-k','dot-s','dot-l'].forEach(id=>setDot(id,'gray'));
+  ['status-k','status-s','status-l'].forEach(id=>setText(id,'Idle'));
+  ['arr1','arr2','arr3'].forEach(id=>document.getElementById(id).className='flow-arrow');
+
+  ['k-log','s-log','l-log'].forEach(id=>{
+    const el = document.getElementById(id);
+    const icons = {
+      'k-log':'⚡','s-log':'⚙','l-log':'🧠'
+    };
+    const msgs = {
+      'k-log':'Waiting for demo start…',
+      's-log':'Waiting for Kafka events…',
+      'l-log':'Waiting for MongoDB sessions…'
+    };
+    el.innerHTML = `<div class="idle-msg"><div class="idle-icon">${icons[id]}</div><div>${msgs[id]}</div></div>`;
+  });
+  document.querySelector('.btn-pause').textContent = '⏸ Pause';
+}
+
+// init dot colors
+['dot-k','dot-s','dot-l'].forEach(id=>setDot(id,'gray'));
+</script>
+</body>
+</html>
