@@ -44,6 +44,9 @@ spark = SparkSession.builder \
     .appName('CartAbandonmentPipeline') \
     .config('spark.sql.shuffle.partitions', '4') \
     .config('spark.driver.memory', '2g') \
+    .config('spark.kafka.consumer.request.timeout.ms',   '120000') \
+    .config('spark.kafka.consumer.session.timeout.ms',   '120000') \
+    .config('spark.kafka.consumer.fetch.max.wait.ms',    '5000')   \
     .getOrCreate()
 
 spark.sparkContext.setLogLevel('ERROR')   # suppress WARN noise
@@ -70,6 +73,10 @@ while True:
             .option('startingOffsets', 'earliest') \
             .option('endingOffsets',   'latest') \
             .option('failOnDataLoss',  'false') \
+            .option('kafka.request.timeout.ms',     '120000') \
+            .option('kafka.session.timeout.ms',     '120000') \
+            .option('kafka.metadata.max.age.ms',    '60000')  \
+            .option('kafka.reconnect.backoff.ms',   '1000')   \
             .load()
 
         count = raw.count()
