@@ -44,15 +44,13 @@ Outputs: `lstm_model.h5` and `model_config.pkl`
 
 **Terminal 1 — Kafka Producer**
 ```bash
-python kafka_producer.py --speed 500
+python kafka_producer.py --speed 99999
 ```
 You will see events streaming in real time.
 
 **Terminal 2 — Spark Consumer**
 ```bash
-spark-submit \
-  --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0 \
-  spark_consumer.py
+python spark_consumer.py
 ```
 You will see Spark processing micro-batches and writing to MongoDB.
 

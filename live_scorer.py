@@ -1,121 +1,126 @@
-# live_scorer.py
+# live_scorer.py  —  Hybrid LSTM version
 # ─────────────────────────────────────────────────────────────────────────────
-# Polls MongoDB every few seconds for new unscored sessions.
-# For each new session:
-#   1. Reads the event_sequence field
-#   2. Pads it to MAX_LEN
-#   3. Feeds it to the LSTM
-#   4. Prints the purchase probability
-#   5. Updates the MongoDB document with the prediction
-#
-# Prerequisites:
-#   train_model.py must have run first  → lstm_model.h5 + model_config.pkl
-#   spark_consumer.py must be running   → MongoDB must have sessions
-#
-# Usage:
-#   python live_scorer.py
+# Polls MongoDB, builds (sequence, features) inputs, runs Hybrid LSTM.
 # ─────────────────────────────────────────────────────────────────────────────
 
 import time
 import pickle
 import numpy as np
-from datetime import datetime
+from datetime import datetime, timezone
 from pymongo import MongoClient
-from tensorflow.keras.models import load_model
-from tensorflow.keras.preprocessing.sequence import pad_sequences
+import torch
+import torch.nn as nn
 
-# ── Config ────────────────────────────────────────────────────────────────────
-MONGO_URI      = 'mongodb://localhost:27017/'
-MONGO_DB       = 'retail_rocket'
-MONGO_COL      = 'sessions'
-MODEL_PATH     = 'lstm_model.h5'
-CONFIG_PATH    = 'model_config.pkl'
-POLL_INTERVAL  = 5        # seconds between MongoDB polls
-THRESHOLD      = 0.5      # above this = predicted purchase
+MONGO_URI = 'mongodb://localhost:27017/'
+MONGO_DB = 'retail_rocket'
+MONGO_COL = 'sessions'
+THRESHOLD = 0.5
+POLL = 5
 
-# ── Load model and config ──────────────────────────────────────────────────────
 print("=" * 60)
-print("  Live Scorer — Cart Abandonment LSTM Prediction")
+print("  Live Scorer  —  Hybrid LSTM  (sequence + features)")
 print("=" * 60)
-print(f"\n  Loading model from {MODEL_PATH}...")
-model = load_model(MODEL_PATH)
 
-with open(CONFIG_PATH, 'rb') as f:
+with open('model_config.pkl', 'rb') as f:
     config = pickle.load(f)
-MAX_LEN   = config['MAX_LEN']    # 50
-EVENT_MAP = config['EVENT_MAP']  # {'view':0, 'addtocart':1}
+with open('scaler.pkl',       'rb') as f:
+    scaler = pickle.load(f)
 
-print(f"  Model loaded. Max sequence length: {MAX_LEN}")
-print(f"\n  Connecting to MongoDB...")
+MAX_LEN = config['MAX_LEN']
+N_FEATS = config['N_FEATS']
+FEAT_COLS = config['FEAT_COLS']
+
+
+class HybridLSTM(nn.Module):
+    def __init__(self, n_feats=N_FEATS, n_session=len(FEAT_COLS)):
+        super().__init__()
+        self.lstm = nn.LSTM(n_feats, 32, batch_first=True)
+        self.feat_fc = nn.Linear(n_session, 16)
+        self.merge = nn.Linear(48, 32)
+        self.out = nn.Linear(32, 1)
+        self.relu = nn.ReLU()
+        self.sig = nn.Sigmoid()
+        self.drop = nn.Dropout(0.3)
+
+    def forward(self, seq, feat):
+        _, (h, _) = self.lstm(seq)
+        h = h.squeeze(0)
+        f = self.relu(self.feat_fc(feat))
+        x = torch.cat([h, f], dim=1)
+        x = self.drop(self.relu(self.merge(x)))
+        return self.sig(self.out(x)).squeeze(1)
+
+
+model = HybridLSTM()
+model.load_state_dict(torch.load('lstm_model.pth', map_location='cpu',
+                                 weights_only=True))
+model.eval()
+print(f"  Model loaded.  Polling every {POLL}s\n")
+
 client = MongoClient(MONGO_URI)
-col    = client[MONGO_DB][MONGO_COL]
-print(f"  Connected to {MONGO_URI}{MONGO_DB}.{MONGO_COL}")
+col = client[MONGO_DB][MONGO_COL]
 
-print(f"\n  Polling every {POLL_INTERVAL}s for new sessions...")
-print(f"  Purchase threshold: {THRESHOLD}")
-print()
-print("-" * 60)
-print(f"  {'Session Key':<25} {'Seq Len':>7} {'P(purchase)':>12} {'Label':>12}")
-print("-" * 60)
+print("-" * 68)
+print(f"  {'Session Key':<22} {'Events':>6} {'P(buy)':>8} {'Prediction':>15}")
+print("-" * 68)
 
-# ── Prediction loop ────────────────────────────────────────────────────────────
-scored_total   = 0
-purchased_pred = 0
+scored = purchased = 0
 
 while True:
-    # Find all sessions not yet scored (purchase_probability is None)
-    unscored = list(col.find({'purchase_probability': None}))
+    docs = list(col.find({'purchase_probability': None}))
+    docs = docs[:500]   # score 500 at a time
+    if docs:
+        keys, seqs, feats = [], [], []
 
-    if unscored:
-        # Batch all unscored sessions together for efficiency
-        session_ids = []
-        sequences   = []
+        for d in docs:
+            # ── Sequence input ───────────────────────────────────────────────
+            etypes = d.get('event_sequence',   [0])
+            intervals = d.get('interval_sequence', [0.0] * len(etypes))
+            pairs = list(zip(etypes, intervals))
+            if len(pairs) == 0:
+                arr = np.zeros((MAX_LEN, N_FEATS), dtype='float32')
+            else:
+                arr = np.array(pairs[:MAX_LEN], dtype='float32')
+                if arr.ndim == 1:          # safety: reshape if 1D
+                    arr = arr.reshape(-1, N_FEATS)
+                if len(arr) < MAX_LEN:
+                    pad = np.zeros((MAX_LEN - len(arr), N_FEATS), 'float32')
+                    arr = np.vstack([arr, pad])
+            seqs.append(arr)
 
-        for doc in unscored:
-            seq = doc.get('event_sequence', [])
-            if len(seq) == 0:
-                seq = [0]   # at minimum one event
-            session_ids.append(doc['session_key'])
-            sequences.append(seq)
+            # ── Feature input ────────────────────────────────────────────────
+            feat_vec = [float(d.get(c, 0) or 0) for c in FEAT_COLS]
+            feats.append(feat_vec)
+            keys.append(d['session_key'])
 
-        # Pad sequences to MAX_LEN
-        X = pad_sequences(
-            sequences,
-            maxlen=MAX_LEN,
-            padding='post',
-            truncating='post',
-            value=0
-        ).reshape(len(sequences), MAX_LEN, 1).astype('float32')
+        Xs = torch.tensor(np.stack(seqs),  dtype=torch.float32)
+        Xf = torch.tensor(
+            scaler.transform(np.array(feats, dtype='float32')),
+            dtype=torch.float32
+        )
 
-        # LSTM inference (batch)
-        probabilities = model.predict(X, verbose=0).flatten()
+        with torch.no_grad():
+            probs = model(Xs, Xf).numpy()
 
-        # Write predictions back to MongoDB and print results
-        now = datetime.utcnow().isoformat()
-        for session_key, prob in zip(session_ids, probabilities):
+        now = datetime.now(timezone.utc).isoformat()
+
+        for key, prob in zip(keys, probs):
             label = 'PURCHASE ✓' if prob >= THRESHOLD else 'abandon  ✗'
+            seq_len = len(col.find_one({'session_key': key})
+                          .get('event_sequence', []))
+            print(f"  {key:<22} {seq_len:>6}   {prob:>6.1%}   {label}")
 
-            # Update MongoDB document
             col.update_one(
-                {'session_key': session_key},
-                {'$set': {
-                    'purchase_probability': round(float(prob), 4),
-                    'predicted_label':      int(prob >= THRESHOLD),
-                    'scored_at':            now
-                }}
+                {'session_key': key},
+                {'$set': {'purchase_probability': round(float(prob), 4),
+                          'predicted_label':      int(prob >= THRESHOLD),
+                          'scored_at':            now}}
             )
+            scored += 1
+            purchased += int(prob >= THRESHOLD)
 
-            # Print live prediction
-            seq_len = len(sequences[session_ids.index(session_key)])
-            print(f"  {session_key:<25} {seq_len:>7}   "
-                  f"{prob:>10.1%}   {label}")
+        pct = purchased / scored * 100 if scored else 0
+        print(f"\n  [{scored} scored | {pct:.1f}% predicted purchase]\n")
+        print("-" * 68)
 
-            scored_total   += 1
-            purchased_pred += int(prob >= THRESHOLD)
-
-        pct_purchase = purchased_pred / scored_total * 100 if scored_total else 0
-        print(f"\n  [{scored_total} scored | {pct_purchase:.1f}% predicted purchase]")
-        print("-" * 60)
-
-    # Wait before next poll
-    time.sleep(POLL_INTERVAL)
+    time.sleep(POLL)
