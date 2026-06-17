@@ -13,7 +13,9 @@ import pandas as pd
 import json
 import time
 import argparse
+from datetime import datetime, timezone
 from kafka import KafkaProducer
+from pymongo import MongoClient
 
 # ── Arguments ─────────────────────────────────────────────────────────────────
 parser = argparse.ArgumentParser()
@@ -56,6 +58,47 @@ print(f"  Connected to {args.broker}")
 print()
 print("  Sending events... (Ctrl+C to stop)")
 print("-" * 60)
+
+# ── MongoDB live-stats writer (best-effort — does not block Kafka) ─────────────
+_mongo_ok = False
+try:
+    _mc    = MongoClient('mongodb://localhost:27017/', serverSelectionTimeoutMS=2000)
+    _stats = _mc['retail_rocket']['pipeline_stats']
+    _logs  = _mc['retail_rocket']['pipeline_logs']
+
+    # Initialise / reset the kafka sub-document
+    _stats.update_one(
+        {'_id': 'pipeline_stats'},
+        {'$set': {
+            'kafka.events_sent':  0,
+            'kafka.events_total': total_rows,
+            'kafka.speed_evps':   0,
+            'kafka.status':       'running',
+        }},
+        upsert=True,
+    )
+    _logs.insert_one({
+        'source':  'kafka',
+        'message': f'[1/2] {total_rows:,} events loaded. Date range: 2015-05-03 → 2015-09-18',
+        'cls':     'success',
+        'ts':      datetime.now(timezone.utc).isoformat(),
+    })
+    _logs.insert_one({
+        'source':  'kafka',
+        'message': f'[2/2] Connected to {args.broker}  |  topic: {args.topic}',
+        'cls':     'info',
+        'ts':      datetime.now(timezone.utc).isoformat(),
+    })
+    _logs.insert_one({
+        'source':  'kafka',
+        'message': f'Sending events at {args.speed}x real-time speed…',
+        'cls':     '',
+        'ts':      datetime.now(timezone.utc).isoformat(),
+    })
+    _mongo_ok = True
+    print("  [dashboard] Writing live stats to MongoDB ✓")
+except Exception as _e:
+    print(f"  [dashboard] MongoDB stats unavailable ({_e}) — dashboard won't show Kafka progress")
 
 # ── Replay loop (chunked streaming) ───────────────────────────────────────────
 prev_ts   = None
@@ -101,6 +144,49 @@ for chunk in pd.read_csv(args.file, chunksize=CHUNK_SIZE):
             pct     = sent / total_rows * 100
             print(f"  {sent:>10,} events sent  |  {pct:5.1f}%  |  {rate:,.0f} ev/sec")
 
+            # ── Dashboard stats (every 10k) ──────────────────────────────────
+            if _mongo_ok:
+                try:
+                    _stats.update_one(
+                        {'_id': 'pipeline_stats'},
+                        {'$set': {
+                            'kafka.events_sent': sent,
+                            'kafka.speed_evps':  int(rate),
+                        }},
+                    )
+                    # Log line every 100k events
+                    if sent % 100_000 == 0:
+                        _logs.insert_one({
+                            'source':  'kafka',
+                            'message': f'{sent:,} events sent  |  {pct:.1f}%  |  {rate:,.0f} ev/sec',
+                            'cls':     '',
+                            'ts':      datetime.now(timezone.utc).isoformat(),
+                        })
+                except Exception:
+                    pass
+
 producer.flush()
 print("-" * 60)
 print(f"\n  Done. {sent:,} events sent to topic '{args.topic}'.")
+
+# ── Mark Kafka complete in dashboard stats ─────────────────────────────────────
+if _mongo_ok:
+    try:
+        elapsed = time.time() - start_run
+        rate    = sent / elapsed if elapsed > 0 else 0
+        _stats.update_one(
+            {'_id': 'pipeline_stats'},
+            {'$set': {
+                'kafka.events_sent': sent,
+                'kafka.speed_evps':  int(rate),
+                'kafka.status':      'complete',
+            }},
+        )
+        _logs.insert_one({
+            'source':  'kafka',
+            'message': f'✓ All {sent:,} events sent to topic \'{args.topic}\'.  Avg {rate:,.0f} ev/sec',
+            'cls':     'success',
+            'ts':      datetime.now(timezone.utc).isoformat(),
+        })
+    except Exception:
+        pass

@@ -279,9 +279,11 @@
     <div class="status-pill"><span class="dot" id="dot-l"></span><span id="status-l">Idle</span></div>
   </div>
   <div class="controls">
-    <button class="btn btn-start" onclick="startDemo()">▶ Start Demo</button>
-    <button class="btn btn-pause" onclick="pauseDemo()">⏸ Pause</button>
-    <button class="btn btn-reset" onclick="resetDemo()">↺ Reset</button>
+    <div class="status-pill" id="conn-pill" style="border-color:rgba(255,255,255,0.15)">
+      <span class="dot gray" id="conn-dot" style="animation:none"></span>
+      <span id="conn-txt" style="font-family:var(--mono);font-size:10.5px">Connecting…</span>
+    </div>
+    <button class="btn btn-start" onclick="startPolling()">⟳ Reconnect</button>
   </div>
 </div>
 
@@ -458,304 +460,220 @@
   </div>
   <div style="font-size:11px;color:var(--muted);text-align:right">
     <div>Retail Rocket Dataset · 2015</div>
-    <div style="margin-top:2px">Babak Rad Jahanbani · Big Data & AI</div>
+    <div style="margin-top:2px">Babak Rad Jahanbani · Big Data &amp; AI</div>
+    <div style="margin-top:2px;font-family:var(--mono);font-size:9px;color:#2D3F55">LIVE DATA — FastAPI + MongoDB</div>
   </div>
 </div>
 
 <script>
-// ── State ────────────────────────────────────────────────────────
-const MAX_EVENTS = 2755610;
-const MAX_SESSIONS = 1523895;
-let state = {
-  running: false,
-  evCount: 0, evSpeed: 0,
-  batches: 0, sessions: 0,
-  scored: 0, purchased: 0,
-  probSum: 0,
-  tickers: [],
-};
+// ── Config ────────────────────────────────────────────────────────────────────
+const API_BASE      = 'http://localhost:8765';
+const STATS_INTERVAL = 2000;   // ms between /api/stats polls
+const LOGS_INTERVAL  = 3000;   // ms between /api/logs polls
+const PREDS_INTERVAL = 4000;   // ms between /api/predictions polls
+const MAX_EVENTS     = 2_755_610;
+const MAX_SESSIONS   = 1_523_895;
 
-// ── Helpers ──────────────────────────────────────────────────────
-const fmt = n => n.toLocaleString();
-const now = () => {
-  const d = new Date();
-  return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`;
-};
-const rand = (a,b) => Math.floor(Math.random()*(b-a+1))+a;
-const randF = (a,b,dp=1) => parseFloat((Math.random()*(b-a)+a).toFixed(dp));
+// ── Helpers ──────────────────────────────────────────────────────────────────
+const fmt  = n => Number(n).toLocaleString();
+const pad  = n => String(n).padStart(2, '0');
+const now  = () => { const d = new Date(); return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`; };
+const pct  = (a, b) => b > 0 ? (a / b * 100).toFixed(1) : '0.0';
 
-function sessionKey() {
-  const prefixes = [1041, 1004, 1282, 7654, 3341, 9901, 5512, 4421, 6633, 2287, 8890];
-  const vis = prefixes[rand(0,prefixes.length-1)]*1000 + rand(100,999);
-  return `${vis}_${rand(1,5)}`;
-}
+function setText(id, v) { const el = document.getElementById(id); if (el) el.textContent = v; }
+function setDot(id, cls) { const el = document.getElementById(id); if (el) el.className = 'dot ' + cls; }
 
-// ── DOM helpers ─────────────────────────────────────────────────
-function setDot(id, cls) {
-  const el = document.getElementById(id);
-  el.className = 'dot ' + cls;
-}
-function setText(id, v) {
-  const el = document.getElementById(id);
-  if(el) el.textContent = v;
-}
+// status → dot class  &  label text
+const DOT_CLS = { idle:'gray', running:'teal', processing:'blue', scoring:'purple', complete:'green' };
+const K_LBL   = { idle:'Idle', running:'Streaming', complete:'Complete ✓' };
+const S_LBL   = { idle:'Idle', processing:'Processing', complete:'Complete ✓' };
+const L_LBL   = { idle:'Idle', scoring:'Scoring', complete:'Complete ✓' };
 
-function addKafkaLine(txt, cls='') {
-  const log = document.getElementById('k-log');
-  const firstMsg = log.querySelector('.idle-msg');
-  if(firstMsg) firstMsg.remove();
-  const line = document.createElement('div');
-  line.className = 'log-line new ' + cls;
-  line.innerHTML = `<span class="log-ts">${now()}</span><span class="log-txt">${txt}</span>`;
-  log.appendChild(line);
-  setTimeout(()=>line.classList.remove('new'), 500);
-  log.scrollTop = log.scrollHeight;
-  if(log.children.length > 80) log.children[0].remove();
-}
+// ── Timers ─────────────────────────────────────────────────────────────────────
+let _timers = [];
 
-function addSparkLine(txt, cls='') {
-  const log = document.getElementById('s-log');
-  const firstMsg = log.querySelector('.idle-msg');
-  if(firstMsg) firstMsg.remove();
-  const line = document.createElement('div');
-  line.className = 'log-line new ' + cls;
-  line.innerHTML = `<span class="log-ts">${now()}</span><span class="log-txt">${txt}</span>`;
-  log.appendChild(line);
-  setTimeout(()=>line.classList.remove('new'), 500);
-  log.scrollTop = log.scrollHeight;
-  if(log.children.length > 80) log.children[0].remove();
-}
-
-function addPrediction(key, evts, prob) {
-  const log = document.getElementById('l-log');
-  const firstMsg = log.querySelector('.idle-msg');
-  if(firstMsg) firstMsg.remove();
-
-  const isPurchase = prob >= 0.5;
-  const probPct = (prob*100).toFixed(1) + '%';
-  const label = isPurchase
-    ? '<span class="pred-label purchase">PURCHASE ✓</span>'
-    : '<span class="pred-label abandon" style="color:#3D5872">abandon  ✗</span>';
-  const probCls = isPurchase ? 'high' : 'low';
-
-  const row = document.createElement('div');
-  row.className = 'pred-row';
-  row.innerHTML = `
-    <span class="pred-key">${key}</span>
-    <span class="pred-events">${evts}</span>
-    <span class="pred-prob ${probCls}">${probPct}</span>
-    <span>${label}</span>
-  `;
-  log.insertBefore(row, log.firstChild);
-  if(log.children.length > 100) log.lastChild.remove();
-}
-
-// ── Kafka simulation ─────────────────────────────────────────────
-function tickKafka() {
-  if(!state.running || state.evCount >= MAX_EVENTS) return;
-
-  const chunkBase = rand(7000, 12000);
-  const newCount = Math.min(state.evCount + chunkBase, MAX_EVENTS);
-  state.evCount = newCount;
-  state.evSpeed = rand(750, 950);
-
-  const pct = (newCount / MAX_EVENTS * 100);
-
-  // Every 10k milestones add a log line
-  if(newCount % 10000 < chunkBase || newCount === MAX_EVENTS) {
-    const milestone = Math.floor(newCount/10000)*10000;
-    addKafkaLine(
-      `${fmt(milestone)} events sent  |  ${pct.toFixed(1)}%  |  ${state.evSpeed} ev/sec`,
-      ''
-    );
-  }
-
-  setText('k-events', fmt(newCount));
-  setText('k-speed', state.evSpeed + ' ev/s');
-  setText('k-pct', pct.toFixed(1) + '%');
-  setText('k-pct2', fmt(newCount) + ' / 2,755,610');
-  document.getElementById('k-bar').style.width = Math.min(pct, 100) + '%';
-  setText('b-events', fmt(newCount));
-
-  if(newCount >= MAX_EVENTS) {
-    addKafkaLine('✓ All 2,755,610 events sent successfully.', 'success');
-    setDot('dot-k', 'green');
-    setText('status-k', 'Complete');
-  }
-}
-
-// ── Spark simulation ─────────────────────────────────────────────
-let sparkDelay = 0;
-function tickSpark() {
-  if(!state.running) return;
-  sparkDelay++;
-  if(sparkDelay < 5) return; // let kafka get ahead first
-  if(state.sessions >= MAX_SESSIONS) return;
-
-  state.batches++;
-  const evBatch = rand(250000, 450000);
-  const sessBatch = rand(95000, 130000);
-  const newSessions = Math.min(state.sessions + sessBatch, MAX_SESSIONS);
-  state.sessions = newSessions;
-  const docs = sessBatch;
-  const pct = newSessions / MAX_SESSIONS * 100;
-
-  addSparkLine(`Batch ${state.batches}  |  ${fmt(evBatch)} events from Kafka`, 'spark');
-  addSparkLine(`→ ${fmt(sessBatch)} sessions aggregated`);
-  addSparkLine(`→ ${fmt(docs)} documents upserted to MongoDB ✓`, 'success');
-
-  setText('s-batches', state.batches);
-  setText('s-sessions', fmt(newSessions));
-  setText('s-evperb', fmt(evBatch));
-  setText('s-pct', pct.toFixed(1) + '%');
-  document.getElementById('s-bar').style.width = Math.min(pct, 100) + '%';
-  setText('b-sessions', fmt(newSessions));
-
-  if(newSessions >= MAX_SESSIONS) {
-    addSparkLine('✓ All sessions written to MongoDB.', 'success');
-    setDot('dot-s', 'green');
-    setText('status-s', 'Complete');
-  }
-}
-
-// ── LSTM simulation ───────────────────────────────────────────────
-let lstmDelay = 0;
-function tickLSTM() {
-  if(!state.running) return;
-  lstmDelay++;
-  if(lstmDelay < 8) return;
-
-  const batchSize = rand(3, 8);
-  for(let i = 0; i < batchSize; i++) {
-    const key = sessionKey();
-    const evts = rand(1, 28);
-    let prob;
-    const roll = Math.random();
-    if(evts === 1)        prob = randF(0.34, 0.39, 3);
-    else if(roll < 0.18)  prob = randF(0.51, 0.78, 3); // PURCHASE
-    else                  prob = randF(0.27, 0.49, 3); // abandon
-
-    state.scored++;
-    state.probSum += prob;
-    if(prob >= 0.5) state.purchased++;
-
-    addPrediction(key, evts, prob);
-  }
-
-  const pct = state.scored > 0 ? (state.purchased/state.scored*100).toFixed(1)+'%' : '0%';
-  const avgConf = state.scored > 0 ? (state.probSum/state.scored*100).toFixed(1)+'%' : '—';
-  setText('l-scored', fmt(state.scored));
-  setText('l-purchase', fmt(state.purchased));
-  setText('l-pct', pct);
-  setText('l-conf', avgConf);
-  setText('b-scored', fmt(state.scored));
-  setText('b-purchase', fmt(state.purchased));
-  document.getElementById('l-bar').style.width = Math.min(parseFloat(avgConf)||35, 100) + '%';
-}
-
-// ── Arrow animation ───────────────────────────────────────────────
-let arrowTick = 0;
-function tickArrows() {
-  if(!state.running) return;
-  arrowTick++;
-  const a1 = document.getElementById('arr1');
-  const a2 = document.getElementById('arr2');
-  const a3 = document.getElementById('arr3');
-  a1.className = 'flow-arrow' + (state.evCount > 0 ? ' active' : '');
-  a2.className = 'flow-arrow' + (state.sessions > 0 ? ' active' : '');
-  a3.className = 'flow-arrow' + (state.scored > 0 ? ' active' : '');
-  setText('flow-summary',
-    state.scored > 0
-    ? `${fmt(state.evCount)} events → ${fmt(state.sessions)} sessions → ${fmt(state.scored)} predictions`
-    : 'Pipeline running…'
-  );
-}
-
-// ── Main loop ─────────────────────────────────────────────────────
-function mainLoop() {
-  tickKafka();
-  tickSpark();
-  tickLSTM();
-  tickArrows();
-}
-
-// ── Controls ──────────────────────────────────────────────────────
-function startDemo() {
-  if(state.running) return;
-  state.running = true;
-
-  setDot('dot-k', 'teal'); setText('status-k', 'Streaming');
-  setDot('dot-s', 'blue'); setText('status-s', 'Processing');
-  setDot('dot-l', 'purple'); setText('status-l', 'Scoring');
-
-  addKafkaLine('[1/2] Loading events_clean.csv...', '');
-  setTimeout(()=>{
-    addKafkaLine('  2,755,610 events loaded.', 'success');
-    addKafkaLine('  Date range: 2015-05-03 → 2015-09-18', '');
-    addKafkaLine('[2/2] Connected to localhost:9092', 'info');
-    addKafkaLine('  Sending events... (speed: 999999x)', '');
-  }, 400);
-
-  setTimeout(()=>{
-    addSparkLine('Spark session started (PySpark 3.5.0)', '');
-    addSparkLine('Kafka connector resolved. Listening on session-events', 'spark');
-    addSparkLine('Batch polling every 10s. MongoDB: localhost:27017', '');
-  }, 1800);
-
-  state.tickers.push(setInterval(mainLoop, 800));
-}
-
-function pauseDemo() {
-  state.running = !state.running;
-  const btn = document.querySelector('.btn-pause');
-  if(state.running) {
-    btn.textContent = '⏸ Pause';
-    setDot('dot-k', 'teal'); setDot('dot-s', 'blue'); setDot('dot-l', 'purple');
+// ── Connection indicator ──────────────────────────────────────────────────────────
+function setConnected(ok, msg) {
+  const dot = document.getElementById('conn-dot');
+  const txt = document.getElementById('conn-txt');
+  if (!dot || !txt) return;
+  if (ok) {
+    dot.style.background = 'var(--success)';
+    dot.style.boxShadow  = '0 0 6px var(--success)';
+    dot.style.animation  = 'pulse 1.5s ease-in-out infinite';
+    txt.textContent      = 'LIVE  ' + now();
   } else {
-    btn.textContent = '▶ Resume';
-    setDot('dot-k', 'gray'); setDot('dot-s', 'gray'); setDot('dot-l', 'gray');
+    dot.style.background = 'var(--danger)';
+    dot.style.boxShadow  = '0 0 6px var(--danger)';
+    dot.style.animation  = 'none';
+    txt.textContent      = 'OFFLINE — start dashboard_server.py';
   }
 }
 
-function resetDemo() {
-  state.tickers.forEach(clearInterval);
-  state = { running:false, evCount:0, evSpeed:0, batches:0, sessions:0,
-            scored:0, purchased:0, probSum:0, tickers:[] };
-  sparkDelay = 0; lstmDelay = 0; arrowTick = 0;
+// ── Stats polling ───────────────────────────────────────────────────────────────
+async function fetchStats() {
+  try {
+    const r = await fetch(`${API_BASE}/api/stats`, { signal: AbortSignal.timeout(3000) });
+    const d = await r.json();
+    if (!d.ok) throw new Error(d.error || 'API error');
 
-  ['k-events','k-speed','k-pct','s-batches','s-sessions','s-evperb',
-   'l-scored','l-purchase','l-pct','b-events','b-sessions','b-scored','b-purchase']
-    .forEach(id=>setText(id, id.includes('speed')?'— ev/s':'0'));
+    // ── Kafka panel ──────────────────────────────────────────────────
+    const k = d.kafka;
+    const kPct = pct(k.events_sent, MAX_EVENTS);
+    setText('k-events', fmt(k.events_sent));
+    setText('k-speed',  k.speed_evps > 0 ? k.speed_evps.toLocaleString() + ' ev/s' : '— ev/s');
+    setText('k-pct',    kPct + '%');
+    setText('k-pct2',   fmt(k.events_sent) + ' / 2,755,610');
+    document.getElementById('k-bar').style.width = Math.min(+kPct, 100) + '%';
+    setDot('dot-k',    DOT_CLS[k.status] || 'gray');
+    setText('status-k', K_LBL[k.status]  || 'Idle');
 
-  setText('k-pct2', '0 / 2,755,610');
-  setText('s-pct', '0%');
-  setText('l-conf', '—');
-  setText('flow-summary', 'Pipeline not started');
-  document.getElementById('k-bar').style.width = '0';
-  document.getElementById('s-bar').style.width = '0';
-  document.getElementById('l-bar').style.width = '35%';
+    // ── Spark panel ──────────────────────────────────────────────────
+    const s = d.spark;
+    const sPct = pct(s.sessions, MAX_SESSIONS);
+    setText('s-batches',  s.batches);
+    setText('s-sessions', fmt(s.sessions));
+    setText('s-evperb',   s.last_batch_events > 0 ? fmt(s.last_batch_events) : '—');
+    setText('s-pct',      sPct + '%');
+    document.getElementById('s-bar').style.width = Math.min(+sPct, 100) + '%';
+    setDot('dot-s',    DOT_CLS[s.status] || 'gray');
+    setText('status-s', S_LBL[s.status]  || 'Idle');
 
-  ['dot-k','dot-s','dot-l'].forEach(id=>setDot(id,'gray'));
-  ['status-k','status-s','status-l'].forEach(id=>setText(id,'Idle'));
-  ['arr1','arr2','arr3'].forEach(id=>document.getElementById(id).className='flow-arrow');
+    // ── LSTM panel ───────────────────────────────────────────────────
+    const l = d.lstm;
+    const lPct = l.scored > 0 ? (l.purchased / l.scored * 100).toFixed(1) + '%' : '0%';
+    setText('l-scored',    fmt(l.scored));
+    setText('l-purchase',  fmt(l.purchased));
+    setText('l-pct',       lPct);
+    setText('l-conf',      l.avg_conf > 0 ? l.avg_conf + '%' : '—');
+    document.getElementById('l-bar').style.width = Math.min(l.avg_conf || 35, 100) + '%';
+    setDot('dot-l',    DOT_CLS[l.status] || 'gray');
+    setText('status-l', L_LBL[l.status]  || 'Idle');
 
-  ['k-log','s-log','l-log'].forEach(id=>{
-    const el = document.getElementById(id);
-    const icons = {
-      'k-log':'⚡','s-log':'⚙','l-log':'🧠'
-    };
-    const msgs = {
-      'k-log':'Waiting for demo start…',
-      's-log':'Waiting for Kafka events…',
-      'l-log':'Waiting for MongoDB sessions…'
-    };
-    el.innerHTML = `<div class="idle-msg"><div class="idle-icon">${icons[id]}</div><div>${msgs[id]}</div></div>`;
-  });
-  document.querySelector('.btn-pause').textContent = '⏸ Pause';
+    // ── Bottom bar ────────────────────────────────────────────────────
+    setText('b-events',   fmt(k.events_sent));
+    setText('b-sessions', fmt(s.sessions));
+    setText('b-scored',   fmt(l.scored));
+    setText('b-purchase', fmt(l.purchased));
+
+    // ── Flow-bar arrows ────────────────────────────────────────────────
+    const a1 = document.getElementById('arr1');
+    const a2 = document.getElementById('arr2');
+    const a3 = document.getElementById('arr3');
+    if (a1) a1.className = 'flow-arrow' + (k.events_sent > 0 ? ' active' : '');
+    if (a2) a2.className = 'flow-arrow' + (s.sessions   > 0 ? ' active' : '');
+    if (a3) a3.className = 'flow-arrow' + (l.scored     > 0 ? ' active' : '');
+    setText('flow-summary',
+      l.scored > 0
+        ? `${fmt(k.events_sent)} events → ${fmt(s.sessions)} sessions → ${fmt(l.scored)} predictions`
+        : k.events_sent > 0 ? 'Pipeline running…' : 'Waiting for pipeline…'
+    );
+
+    setConnected(true);
+  } catch(e) {
+    setConnected(false);
+  }
 }
 
-// init dot colors
-['dot-k','dot-s','dot-l'].forEach(id=>setDot(id,'gray'));
+// ── Log polling (Kafka + Spark) ────────────────────────────────────────────────
+const _seenLogs = { kafka: new Set(), spark: new Set() };
+
+async function fetchLogs(source, containerId) {
+  try {
+    const r = await fetch(`${API_BASE}/api/logs/${source}`, { signal: AbortSignal.timeout(3000) });
+    const d = await r.json();
+    if (!d.ok || !d.logs || d.logs.length === 0) return;
+
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    // remove idle placeholder on first real data
+    const idle = container.querySelector('.idle-msg');
+    if (idle) idle.remove();
+
+    let added = 0;
+    for (const log of d.logs) {
+      // deduplicate by message+ts key
+      const key = (log.ts || '') + '|' + log.message;
+      if (_seenLogs[source].has(key)) continue;
+      _seenLogs[source].add(key);
+
+      const ts  = log.ts ? new Date(log.ts).toTimeString().slice(0,8) : now();
+      const line = document.createElement('div');
+      line.className = 'log-line new ' + (log.cls || '');
+      line.innerHTML = `<span class="log-ts">${ts}</span><span class="log-txt">${log.message}</span>`;
+      container.appendChild(line);
+      setTimeout(() => line.classList.remove('new'), 500);
+      added++;
+      if (container.children.length > 80) container.children[0].remove();
+    }
+    if (added > 0) container.scrollTop = container.scrollHeight;
+  } catch(e) { /* silent — OFFLINE state shown by fetchStats */ }
+}
+
+// ── Predictions polling ─────────────────────────────────────────────────────────
+const _seenPreds = new Set();
+
+async function fetchPredictions() {
+  try {
+    const r = await fetch(`${API_BASE}/api/predictions`, { signal: AbortSignal.timeout(3000) });
+    const d = await r.json();
+    if (!d.ok || !d.predictions || d.predictions.length === 0) return;
+
+    const log = document.getElementById('l-log');
+    if (!log) return;
+
+    const idle = log.querySelector('.idle-msg');
+    if (idle) idle.remove();
+
+    for (const p of d.predictions) {
+      if (_seenPreds.has(p.session_key)) continue;
+      _seenPreds.add(p.session_key);
+
+      const prob       = p.purchase_probability || 0;
+      const isPurchase = p.predicted_label === 1;
+      const probPct    = (prob * 100).toFixed(1) + '%';
+      const label      = isPurchase
+        ? '<span class="pred-label purchase">PURCHASE ✓</span>'
+        : '<span class="pred-label abandon" style="color:#3D5872">abandon  ✗</span>';
+      const probCls    = isPurchase ? 'high' : 'low';
+      const evts       = p.sequence_length || 0;
+
+      const row = document.createElement('div');
+      row.className = 'pred-row';
+      row.innerHTML = `
+        <span class="pred-key">${p.session_key}</span>
+        <span class="pred-events">${evts}</span>
+        <span class="pred-prob ${probCls}">${probPct}</span>
+        <span>${label}</span>
+      `;
+      log.insertBefore(row, log.firstChild);
+      if (log.children.length > 100) log.lastChild.remove();
+    }
+  } catch(e) { /* silent */ }
+}
+
+// ── Start / restart polling ──────────────────────────────────────────────────────
+function startPolling() {
+  _timers.forEach(clearInterval);
+  _timers = [];
+
+  // immediate first fetch
+  fetchStats();
+  fetchLogs('kafka', 'k-log');
+  fetchLogs('spark', 's-log');
+  fetchPredictions();
+
+  // recurring polls
+  _timers.push(setInterval(fetchStats,                          STATS_INTERVAL));
+  _timers.push(setInterval(() => fetchLogs('kafka', 'k-log'),  LOGS_INTERVAL));
+  _timers.push(setInterval(() => fetchLogs('spark', 's-log'),  LOGS_INTERVAL));
+  _timers.push(setInterval(fetchPredictions,                    PREDS_INTERVAL));
+}
+
+// ── Auto-start on page load ───────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', startPolling);
+['dot-k','dot-s','dot-l'].forEach(id => setDot(id, 'gray'));
 </script>
 </body>
 </html>

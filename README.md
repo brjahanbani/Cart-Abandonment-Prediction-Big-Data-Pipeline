@@ -42,6 +42,9 @@ Outputs: `lstm_model.h5` and `model_config.pkl`
 
 ### Step 4 — Open 3 terminals for the live demo
 
+uvicorn dashboard_server:app --host 0.0.0.0 --port 8765
+🌐 http://localhost:8765
+
 **Terminal 1 — Kafka Producer**
 ```bash
 python kafka_producer.py --speed 99999

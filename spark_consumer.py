@@ -8,6 +8,7 @@
 # ─────────────────────────────────────────────────────────────────────────────
 
 import os, time
+from datetime import datetime, timezone
 os.environ['HADOOP_HOME']        = 'C:\\hadoop'
 os.environ['PYSPARK_PYTHON']     = 'python'
 os.environ['PYSPARK_DRIVER_PYTHON'] = 'python'
@@ -62,6 +63,41 @@ print("  Listening... (Ctrl+C to stop)\n")
 print("-" * 60)
 
 batch_num = 0
+
+# ── Initialise Spark status in pipeline_stats ─────────────────────────────────
+_dash_client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=2000)
+_stats_col   = _dash_client['retail_rocket']['pipeline_stats']
+_logs_col    = _dash_client['retail_rocket']['pipeline_logs']
+try:
+    _stats_col.update_one(
+        {'_id': 'pipeline_stats'},
+        {'$set': {
+            'spark.batches':           0,
+            'spark.last_batch_events': 0,
+            'spark.status':            'processing',
+        }},
+        upsert=True,
+    )
+    _logs_col.insert_one({
+        'source':  'spark',
+        'message': 'Spark session started (PySpark 3.5.0)',
+        'cls':     '',
+        'ts':      datetime.now(timezone.utc).isoformat(),
+    })
+    _logs_col.insert_one({
+        'source':  'spark',
+        'message': f'Kafka → {KAFKA_BROKER} / {KAFKA_TOPIC}  |  MongoDB: {MONGO_URI}{MONGO_DB}.{MONGO_COL}',
+        'cls':     'spark',
+        'ts':      datetime.now(timezone.utc).isoformat(),
+    })
+    _logs_col.insert_one({
+        'source':  'spark',
+        'message': f'Batch polling every {POLL_INTERVAL}s. Listening…',
+        'cls':     '',
+        'ts':      datetime.now(timezone.utc).isoformat(),
+    })
+except Exception as _e:
+    print(f"  [dashboard] Could not init Spark stats in MongoDB: {_e}")
 
 while True:
     try:
@@ -174,6 +210,38 @@ while True:
 
         client.close()
         print(f"  → {written} documents upserted to MongoDB ✓")
+
+        # ── Write batch stats + logs to pipeline_stats ─────────────────────────────
+        try:
+            _stats_col.update_one(
+                {'_id': 'pipeline_stats'},
+                {'$set': {
+                    'spark.batches':           batch_num,
+                    'spark.last_batch_events': n_events,
+                    'spark.status':            'processing',
+                }},
+                upsert=True,
+            )
+            _logs_col.insert_one({
+                'source':  'spark',
+                'message': f'Batch {batch_num}  |  {n_events:,} events from Kafka',
+                'cls':     'spark',
+                'ts':      datetime.now(timezone.utc).isoformat(),
+            })
+            _logs_col.insert_one({
+                'source':  'spark',
+                'message': f'→ {n_sessions:,} sessions aggregated',
+                'cls':     '',
+                'ts':      datetime.now(timezone.utc).isoformat(),
+            })
+            _logs_col.insert_one({
+                'source':  'spark',
+                'message': f'→ {written:,} documents upserted to MongoDB ✓',
+                'cls':     'success',
+                'ts':      datetime.now(timezone.utc).isoformat(),
+            })
+        except Exception as _e:
+            print(f"  [dashboard] stats write error: {_e}")
 
     except KeyboardInterrupt:
         print("\n  Stopped by user.")

@@ -58,7 +58,25 @@ model.eval()
 print(f"  Model loaded.  Polling every {POLL}s\n")
 
 client = MongoClient(MONGO_URI)
-col = client[MONGO_DB][MONGO_COL]
+col    = client[MONGO_DB][MONGO_COL]
+
+# ── Initialise LSTM status in pipeline_stats ─────────────────────────────────────
+_stats_col = client[MONGO_DB]['pipeline_stats']
+_logs_col  = client[MONGO_DB]['pipeline_logs']
+try:
+    _stats_col.update_one(
+        {'_id': 'pipeline_stats'},
+        {'$set': {'lstm.status': 'scoring'}},
+        upsert=True,
+    )
+    _logs_col.insert_one({
+        'source':  'lstm',
+        'message': f'Hybrid LSTM scorer started. Threshold={THRESHOLD}. Polling every {POLL}s',
+        'cls':     'info',
+        'ts':      datetime.now(timezone.utc).isoformat(),
+    })
+except Exception:
+    pass
 
 print("-" * 68)
 print(f"  {'Session Key':<22} {'Events':>6} {'P(buy)':>8} {'Prediction':>15}")
@@ -122,5 +140,26 @@ while True:
         pct = purchased / scored * 100 if scored else 0
         print(f"\n  [{scored} scored | {pct:.1f}% predicted purchase]\n")
         print("-" * 68)
+
+        # ── Write scoring-batch stats + log to pipeline_stats ─────────────────────
+        try:
+            _stats_col.update_one(
+                {'_id': 'pipeline_stats'},
+                {'$set': {'lstm.status': 'scoring'}},
+            )
+            batch_purchased = sum(1 for key, prob in zip(keys, probs) if prob >= THRESHOLD)
+            _logs_col.insert_one({
+                'source':  'lstm',
+                'message': (
+                    f'Scored {len(keys)} sessions  |  '
+                    f'{batch_purchased} PURCHASE  |  '
+                    f'{len(keys)-batch_purchased} abandon  |  '
+                    f'total scored: {scored}'
+                ),
+                'cls':     'success' if batch_purchased > 0 else '',
+                'ts':      datetime.now(timezone.utc).isoformat(),
+            })
+        except Exception:
+            pass
 
     time.sleep(POLL)
