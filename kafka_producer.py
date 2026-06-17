@@ -33,12 +33,13 @@ print(f"  Speed   : {args.speed}x real time")
 print(f"  Broker  : {args.broker}")
 print()
 
-# ── Load and sort events ───────────────────────────────────────────────────────
-print("[1/2] Loading events...")
-df = pd.read_csv(args.file).sort_values('timestamp').reset_index(drop=True)
-print(f"  {len(df):,} events loaded.")
-print(f"  Date range: {pd.to_datetime(df['timestamp'].min(), unit='ms').date()}"
-      f" → {pd.to_datetime(df['timestamp'].max(), unit='ms').date()}")
+# ── Streaming constants ────────────────────────────────────────────────────────
+CHUNK_SIZE = 50_000   # rows per chunk — keeps peak RAM well under 200 MB
+
+# Count total rows without loading the file (for progress reporting)
+print("[1/2] Scanning events file...")
+total_rows = sum(1 for _ in open(args.file, encoding='utf-8')) - 1  # subtract header
+print(f"  {total_rows:,} events found (streaming {CHUNK_SIZE:,} rows at a time).")
 print()
 
 # ── Connect to Kafka ───────────────────────────────────────────────────────────
@@ -47,52 +48,58 @@ producer = KafkaProducer(
     bootstrap_servers=args.broker,
     key_serializer   = lambda k: str(k).encode('utf-8'),
     value_serializer = lambda v: json.dumps(v).encode('utf-8'),
-    acks='all'        # wait for broker confirmation before continuing
+    linger_ms        = 5,    # micro-batch for throughput
+    batch_size       = 65536,
+    acks             = 'all'
 )
 print(f"  Connected to {args.broker}")
 print()
 print("  Sending events... (Ctrl+C to stop)")
 print("-" * 60)
 
-# ── Replay loop ────────────────────────────────────────────────────────────────
+# ── Replay loop (chunked streaming) ───────────────────────────────────────────
 prev_ts   = None
 sent      = 0
 start_run = time.time()
 
-for _, row in df.iterrows():
-    # Simulate real-time delay between events (scaled by speed factor)
-    if prev_ts is not None:
-        real_gap_ms = row['timestamp'] - prev_ts
-        sleep_sec   = (real_gap_ms / 1000) / args.speed
-        if sleep_sec > 0:
-            time.sleep(min(sleep_sec, 0.1))  # cap at 100ms to keep demo fast
+for chunk in pd.read_csv(args.file, chunksize=CHUNK_SIZE):
+    # Sort within each chunk to preserve temporal order inside the batch
+    chunk = chunk.sort_values('timestamp')
 
-    # Build message payload
-    message = {
-        'timestamp':     int(row['timestamp']),
-        'visitorid':     int(row['visitorid']),
-        'event':         str(row['event']),
-        'itemid':        int(row['itemid'])   if pd.notna(row['itemid'])        else None,
-        'transactionid': int(row['transactionid']) if pd.notna(row['transactionid']) else None,
-        'session_key':   str(row['session_key'])
-    }
+    for _, row in chunk.iterrows():
+        # Simulate real-time delay between events (scaled by speed factor)
+        if prev_ts is not None:
+            real_gap_ms = float(row['timestamp']) - prev_ts
+            sleep_sec   = (real_gap_ms / 1000.0) / args.speed
+            if sleep_sec > 0:
+                time.sleep(min(sleep_sec, 0.1))  # cap at 100 ms to keep demo fast
 
-    # Key = visitorid → same visitor always goes to same Kafka partition
-    producer.send(
-        topic=args.topic,
-        key=str(row['visitorid']),
-        value=message
-    )
+        # Build message payload
+        message = {
+            'timestamp':     int(row['timestamp']),
+            'visitorid':     int(row['visitorid']),
+            'event':         str(row['event']),
+            'itemid':        int(row['itemid'])          if pd.notna(row.get('itemid'))          else None,
+            'transactionid': int(row['transactionid'])   if pd.notna(row.get('transactionid'))   else None,
+            'session_key':   str(row['session_key'])
+        }
 
-    prev_ts = row['timestamp']
-    sent   += 1
+        # Key = visitorid → same visitor always goes to same Kafka partition
+        producer.send(
+            topic=args.topic,
+            key=str(row['visitorid']),
+            value=message
+        )
 
-    # Print progress every 10,000 events
-    if sent % 10_000 == 0:
-        elapsed = time.time() - start_run
-        rate    = sent / elapsed
-        pct     = sent / len(df) * 100
-        print(f"  {sent:>10,} events sent  |  {pct:5.1f}%  |  {rate:,.0f} ev/sec")
+        prev_ts = float(row['timestamp'])
+        sent   += 1
+
+        # Print progress every 10,000 events
+        if sent % 10_000 == 0:
+            elapsed = time.time() - start_run
+            rate    = sent / elapsed if elapsed > 0 else float('inf')
+            pct     = sent / total_rows * 100
+            print(f"  {sent:>10,} events sent  |  {pct:5.1f}%  |  {rate:,.0f} ev/sec")
 
 producer.flush()
 print("-" * 60)
