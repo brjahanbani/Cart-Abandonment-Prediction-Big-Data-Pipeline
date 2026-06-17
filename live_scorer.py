@@ -67,7 +67,7 @@ print("-" * 68)
 scored = purchased = 0
 
 while True:
-    docs = list(col.find({'purchase_probability': None}))
+    docs = list(col.find({'purchase_probability': None, 'addtocart_count': {'$gt': 0}}))
     docs = docs[:500]   # score 500 at a time
     if docs:
         keys, seqs, feats = [], [], []
