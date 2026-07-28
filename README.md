@@ -4,6 +4,7 @@
 ### Folder layout
 | Folder | Contents |
 |---|---|
+| `0-Offline/` | `offline_cart_abandonment_prediction.py` — offline data-mining comparison (Logistic Regression, Decision Tree, Random Forest, XGBoost) on `1-Data/cart_session_features.csv` |
 | `1-Data/` | `events_clean.csv`, `cart_session_features.csv` — from Stage 1 preprocessing |
 | `2-Infra/` | `docker-compose.yml`, `requirements.txt` |
 | `3-Training/` | `train_model.py` (LSTM), plus baseline scripts (`train_logistic_online_baseline.py`, `train_xgboost_corrected_baseline.py`) |
@@ -19,11 +20,24 @@ without any path changes.
 ### Project files & run order
 | File | Purpose | Run order |
 |---|---|---|
+| `0-Offline/offline_cart_abandonment_prediction.py` | Offline model comparison (data mining stage) | Step 0 (optional) |
 | `2-Infra/docker-compose.yml` | Launches Kafka + MongoDB | Step 1 |
 | `3-Training/train_model.py` | Trains LSTM, saves lstm_model.h5 | Step 2 |
 | `5-Pipeline/kafka_producer.py` | Replays events_clean.csv to Kafka | Step 3 |
 | `5-Pipeline/spark_consumer.py` | Reads Kafka → features → MongoDB | Step 4 |
 | `5-Pipeline/live_scorer.py` | Reads MongoDB → LSTM → predictions | Step 5 |
+
+---
+
+### Step 0 — Offline data-mining comparison (optional)
+```bash
+cd 0-Offline
+python offline_cart_abandonment_prediction.py
+```
+Trains Logistic Regression, Decision Tree, Random Forest, and XGBoost on
+`1-Data/cart_session_features.csv` and saves comparison charts
+(`dm_results_comparison.png`, `dm_roc_curves.png`, `dm_feature_importance.png`)
+into `0-Offline/`. Independent of the live pipeline below.
 
 ---
 
