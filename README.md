@@ -8,8 +8,9 @@
 | `1-Data/` | `events_clean.csv`, `cart_session_features.csv` — from Stage 1 preprocessing |
 | `2-Infra/` | `docker-compose.yml`, `requirements.txt` |
 | `3-Training/` | `train_lstm_model.py` (main model), plus baseline scripts (`train_logistic_regression_baseline.py`, `train_xgboost_baseline.py`) |
-| `4-Model-Artifacts/` | `lstm_model.pth`, `model_config.pkl`, `scaler.pkl` — produced by `3-Training/train_model.py` |
+| `4-Model-Artifacts/` | `lstm_model.pth`, `model_config.pkl`, `scaler.pkl` — produced by `3-Training/train_lstm_model.py` |
 | `5-Pipeline/` | `kafka_producer.py`, `spark_consumer.py`, `live_scorer.py`, `dashboard_server.py`, `pipeline_dashboard.html` |
+| `docs/` | `lr_xgboost_comparison.md` — why `0-Offline`'s LR/XGBoost AUC differs from `3-Training`'s leakage-corrected baselines |
 
 Scripts reference `1-Data/` and `4-Model-Artifacts/` via relative paths
 (e.g. `../1-Data/events_clean.csv`), so **run each script from inside its own
