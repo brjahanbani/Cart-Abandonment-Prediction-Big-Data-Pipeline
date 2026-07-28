@@ -1,4 +1,4 @@
-# train_model.py  —  Hybrid LSTM + Feature model
+# train_lstm_model.py  —  Hybrid LSTM + Feature model
 # ─────────────────────────────────────────────────────────────────────────────
 # Two-branch architecture:
 #   Branch A : LSTM(32) on event sequences  [event_type, log_interval]
@@ -46,8 +46,8 @@ print("=" * 60)
 
 # ── Load data ─────────────────────────────────────────────────────────────────
 print("\n[1/5] Loading data...")
-events   = pd.read_csv('events_clean.csv')
-sessions = pd.read_csv('cart_session_features.csv')
+events   = pd.read_csv('../1-Data/events_clean.csv')
+sessions = pd.read_csv('../1-Data/cart_session_features.csv')
 print(f"  Events   : {len(events):,}")
 print(f"  Sessions : {len(sessions):,}")
 
@@ -249,19 +249,19 @@ print(classification_report(y_te, preds,
       target_names=['Abandoned (0)', 'Purchased (1)']))
 
 # ── Save ──────────────────────────────────────────────────────────────────────
-torch.save(model.state_dict(), 'lstm_model.pth')
-with open('scaler.pkl', 'wb') as f:
+torch.save(model.state_dict(), '../4-Model-Artifacts/lstm_model.pth')
+with open('../4-Model-Artifacts/scaler.pkl', 'wb') as f:
     pickle.dump(scaler, f)
 config = {
     'MAX_LEN': MAX_LEN, 'N_FEATS': N_FEATS,
     'EVENT_MAP': EVENT_MAP, 'FEAT_COLS': FEAT_COLS,
     'framework': 'pytorch_hybrid'
 }
-with open('model_config.pkl', 'wb') as f:
+with open('../4-Model-Artifacts/model_config.pkl', 'wb') as f:
     pickle.dump(config, f)
 
-print("  Saved : lstm_model.pth")
-print("  Saved : scaler.pkl")
-print("  Saved : model_config.pkl")
+print("  Saved : ../4-Model-Artifacts/lstm_model.pth")
+print("  Saved : ../4-Model-Artifacts/scaler.pkl")
+print("  Saved : ../4-Model-Artifacts/model_config.pkl")
 print("\n  Done.")
 print("=" * 60)

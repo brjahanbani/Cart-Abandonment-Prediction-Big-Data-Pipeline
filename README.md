@@ -7,22 +7,21 @@
 | `0-Offline/` | `offline_cart_abandonment_prediction.py` — offline data-mining comparison (Logistic Regression, Decision Tree, Random Forest, XGBoost) on `1-Data/cart_session_features.csv` |
 | `1-Data/` | `events_clean.csv`, `cart_session_features.csv` — from Stage 1 preprocessing |
 | `2-Infra/` | `docker-compose.yml`, `requirements.txt` |
-| `3-Training/` | `train_model.py` (LSTM), plus baseline scripts (`train_logistic_online_baseline.py`, `train_xgboost_corrected_baseline.py`) |
+| `3-Training/` | `train_lstm_model.py` (main model), plus baseline scripts (`train_logistic_regression_baseline.py`, `train_xgboost_baseline.py`) |
 | `4-Model-Artifacts/` | `lstm_model.pth`, `model_config.pkl`, `scaler.pkl` — produced by `3-Training/train_model.py` |
 | `5-Pipeline/` | `kafka_producer.py`, `spark_consumer.py`, `live_scorer.py`, `dashboard_server.py`, `pipeline_dashboard.html` |
 
-Scripts read their input files (data/model) by bare filename from the current
-directory, so **run each script from inside its own folder** (`cd` into it
-first). `events_clean.csv` and the model artifacts are hardlinked into
-`5-Pipeline/` so `kafka_producer.py` and `live_scorer.py` can find them
-without any path changes.
+Scripts reference `1-Data/` and `4-Model-Artifacts/` via relative paths
+(e.g. `../1-Data/events_clean.csv`), so **run each script from inside its own
+folder** (`cd` into it first) — the `../` paths resolve from there. Data and
+model artifacts exist in exactly one place each; no copies to keep in sync.
 
 ### Project files & run order
 | File | Purpose | Run order |
 |---|---|---|
 | `0-Offline/offline_cart_abandonment_prediction.py` | Offline model comparison (data mining stage) | Step 0 (optional) |
 | `2-Infra/docker-compose.yml` | Launches Kafka + MongoDB | Step 1 |
-| `3-Training/train_model.py` | Trains LSTM, saves lstm_model.h5 | Step 2 |
+| `3-Training/train_lstm_model.py` | Trains LSTM, saves lstm_model.h5 | Step 2 |
 | `5-Pipeline/kafka_producer.py` | Replays events_clean.csv to Kafka | Step 3 |
 | `5-Pipeline/spark_consumer.py` | Reads Kafka → features → MongoDB | Step 4 |
 | `5-Pipeline/live_scorer.py` | Reads MongoDB → LSTM → predictions | Step 5 |
@@ -61,10 +60,10 @@ pip install -r 2-Infra/requirements.txt
 ### Step 3 — Train the LSTM (run once, takes ~2-3 minutes)
 ```bash
 cd 3-Training
-python train_model.py
+python train_lstm_model.py
 ```
-Outputs (into `3-Training/`): `lstm_model.pth`, `scaler.pkl`, `model_config.pkl`.
-Move/copy them into `4-Model-Artifacts/` (and re-link into `5-Pipeline/`) if you retrain.
+Outputs directly into `4-Model-Artifacts/`: `lstm_model.pth`, `scaler.pkl`, `model_config.pkl`.
+Retraining overwrites them in place — `5-Pipeline/live_scorer.py` picks up the new weights automatically.
 
 ---
 

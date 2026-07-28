@@ -23,7 +23,7 @@ parser.add_argument('--speed',  type=float, default=500,
                     help='Replay speed multiplier (default: 500x real time)')
 parser.add_argument('--topic',  type=str,   default='session-events')
 parser.add_argument('--broker', type=str,   default='localhost:9092')
-parser.add_argument('--file',   type=str,   default='events_clean.csv')
+parser.add_argument('--file',   type=str,   default='../1-Data/events_clean.csv')
 args = parser.parse_args()
 
 print("=" * 60)

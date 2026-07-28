@@ -21,8 +21,8 @@ print("=" * 70)
 print("Leakage-Corrected XGBoost Baseline")
 print("=" * 70)
 
-events = pd.read_csv("events_clean.csv")
-sessions = pd.read_csv("cart_session_features.csv")
+events = pd.read_csv("../1-Data/events_clean.csv")
+sessions = pd.read_csv("../1-Data/cart_session_features.csv")
 
 ev_no_txn = events[events["event"] != "transaction"].copy()
 

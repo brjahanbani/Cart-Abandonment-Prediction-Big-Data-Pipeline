@@ -21,9 +21,9 @@ print("=" * 60)
 print("  Live Scorer  —  Hybrid LSTM  (sequence + features)")
 print("=" * 60)
 
-with open('model_config.pkl', 'rb') as f:
+with open('../4-Model-Artifacts/model_config.pkl', 'rb') as f:
     config = pickle.load(f)
-with open('scaler.pkl',       'rb') as f:
+with open('../4-Model-Artifacts/scaler.pkl',       'rb') as f:
     scaler = pickle.load(f)
 
 MAX_LEN = config['MAX_LEN']
@@ -52,7 +52,7 @@ class HybridLSTM(nn.Module):
 
 
 model = HybridLSTM()
-model.load_state_dict(torch.load('lstm_model.pth', map_location='cpu',
+model.load_state_dict(torch.load('../4-Model-Artifacts/lstm_model.pth', map_location='cpu',
                                  weights_only=True))
 model.eval()
 print(f"  Model loaded.  Polling every {POLL}s\n")
