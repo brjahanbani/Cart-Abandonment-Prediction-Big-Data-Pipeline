@@ -1,0 +1,17 @@
+{
+  "config": "counts_only",
+  "features": [
+    "view_count",
+    "addtocart_count",
+    "view_to_cart_ratio",
+    "unique_items_count"
+  ],
+  "seed": 42,
+  "model": "LogisticRegression",
+  "roc_auc": 0.6097557381677458,
+  "pr_auc": 0.3863268933248353,
+  "accuracy": 0.6720173041894353,
+  "precision": 0.3817049808429119,
+  "recall": 0.33389191453707584,
+  "f1": 0.35620111731843573
+}

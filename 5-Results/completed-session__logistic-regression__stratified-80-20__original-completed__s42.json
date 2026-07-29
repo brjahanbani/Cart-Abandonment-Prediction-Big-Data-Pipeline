@@ -1,0 +1,20 @@
+{
+  "config": "original_completed",
+  "features": [
+    "view_count",
+    "addtocart_count",
+    "view_to_cart_ratio",
+    "unique_items_count",
+    "session_age_seconds",
+    "inter_event_interval_mean",
+    "recency_last_cart_seconds"
+  ],
+  "seed": 42,
+  "model": "LogisticRegression",
+  "roc_auc": 0.8248655387334305,
+  "pr_auc": 0.5986137344873325,
+  "accuracy": 0.7767531876138434,
+  "precision": 0.5909479077711358,
+  "recall": 0.5798072894847088,
+  "f1": 0.5853245929371961
+}

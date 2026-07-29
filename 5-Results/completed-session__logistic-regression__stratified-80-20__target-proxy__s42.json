@@ -1,0 +1,16 @@
+{
+  "config": "target_proxy",
+  "features": [
+    "event_count",
+    "view_count",
+    "addtocart_count"
+  ],
+  "seed": 42,
+  "model": "LogisticRegression",
+  "roc_auc": 0.9945031116976637,
+  "pr_auc": 0.9513723452310963,
+  "accuracy": 0.9943078324225865,
+  "precision": 0.9802712700369913,
+  "recall": 0.9991621281943862,
+  "f1": 0.9896265560165975
+}

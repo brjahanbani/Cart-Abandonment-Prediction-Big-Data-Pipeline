@@ -1,0 +1,20 @@
+{
+  "config": "original_completed",
+  "features": [
+    "view_count",
+    "addtocart_count",
+    "view_to_cart_ratio",
+    "unique_items_count",
+    "session_age_seconds",
+    "inter_event_interval_mean",
+    "recency_last_cart_seconds"
+  ],
+  "seed": 42,
+  "model": "RandomForest",
+  "roc_auc": 0.9836889726076692,
+  "pr_auc": 0.9620345425509889,
+  "accuracy": 0.9411429872495446,
+  "precision": 0.9082969432314411,
+  "recall": 0.8713866778382907,
+  "f1": 0.8894590549497541
+}

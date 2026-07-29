@@ -1,0 +1,16 @@
+{
+  "config": "timing_only",
+  "features": [
+    "session_age_seconds",
+    "inter_event_interval_mean",
+    "recency_last_cart_seconds"
+  ],
+  "seed": 55,
+  "model": "XGBoost",
+  "roc_auc": 0.8679457320503778,
+  "pr_auc": 0.6477365676418599,
+  "accuracy": 0.7642304189435337,
+  "precision": 0.5392059553349876,
+  "recall": 0.9103477167993297,
+  "f1": 0.6772635187782453
+}

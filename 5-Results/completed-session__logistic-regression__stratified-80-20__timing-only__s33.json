@@ -1,0 +1,16 @@
+{
+  "config": "timing_only",
+  "features": [
+    "session_age_seconds",
+    "inter_event_interval_mean",
+    "recency_last_cart_seconds"
+  ],
+  "seed": 33,
+  "model": "LogisticRegression",
+  "roc_auc": 0.8037646469572726,
+  "pr_auc": 0.5503531234550414,
+  "accuracy": 0.7357695810564663,
+  "precision": 0.5128006206361521,
+  "recall": 0.5538332635106828,
+  "f1": 0.5325276938569989
+}

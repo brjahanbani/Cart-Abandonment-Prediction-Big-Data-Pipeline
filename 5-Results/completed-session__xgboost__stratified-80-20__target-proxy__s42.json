@@ -1,0 +1,16 @@
+{
+  "config": "target_proxy",
+  "features": [
+    "event_count",
+    "view_count",
+    "addtocart_count"
+  ],
+  "seed": 42,
+  "model": "XGBoost",
+  "roc_auc": 0.9996432463138126,
+  "pr_auc": 0.9990144244857758,
+  "accuracy": 0.9931693989071039,
+  "precision": 0.9801898472967395,
+  "recall": 0.9949727691663176,
+  "f1": 0.9875259875259875
+}

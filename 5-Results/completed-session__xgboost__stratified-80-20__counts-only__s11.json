@@ -1,0 +1,17 @@
+{
+  "config": "counts_only",
+  "features": [
+    "view_count",
+    "addtocart_count",
+    "view_to_cart_ratio",
+    "unique_items_count"
+  ],
+  "seed": 11,
+  "model": "XGBoost",
+  "roc_auc": 0.6020094188212307,
+  "pr_auc": 0.3919265435840606,
+  "accuracy": 0.6216985428051002,
+  "precision": 0.35047923322683705,
+  "recall": 0.459572685379137,
+  "f1": 0.3976798984955592
+}

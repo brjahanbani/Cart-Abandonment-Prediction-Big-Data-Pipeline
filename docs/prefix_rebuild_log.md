@@ -156,11 +156,112 @@ population with a rising share that still eventually buys.
 **Status:** `build_prefix_dataset.py` complete and verified. `prefix_dataset.parquet`
 exists at repo root.
 
+## 2026-07-29 — Repo reorg: two lineages separated (prompt 4)
+
+User asked for a MOVE-ONLY reorg to separate the frozen "completed-session"
+lineage (evidence for already-published Final Report / workshop paper
+figures — must never be edited or bug-fixed) from the "decision-time"
+point-in-time lineage (this rebuild). Full details, before/after tree, and
+verification results are in the assistant's chat response for this prompt;
+summarized here for continuity:
+
+**Step 0:** tagged `completed-session-audit` at `6e6f72c` (the commit just
+before the reorg) before touching any files. Confirmed via `git tag -l`.
+
+**Moves (git mv for tracked files, plain mv for untracked/gitignored ones):**
+- `1-Data/cart_session_features.csv` → `1-Data/completed-session/cart_session_features.csv`
+- `prefix_dataset.parquet` (repo root) → `1-Data/decision-time/prefix_dataset.parquet`
+- `build_prefix_dataset.py` (repo root) → `3-Decision-Time/build_prefix_dataset.py`
+- `0-Offline/Data Cleaning & Feature Engineering/1-events.csv` (+ category_tree,
+  item_properties parts) → `1-Data/raw/`
+- `0-Offline/Data Cleaning & Feature Engineering/stage1_data_cleaning_feature_engineering.py`,
+  `0-Offline/offline_cart_abandonment_prediction.py`,
+  `0-Offline/Offline_Cart_Abandonment_Prediction.ipynb` (renamed to
+  `offline_cart_abandonment_prediction_notebook.ipynb` to kill a Windows
+  case-only collision with the `.py` of the same base name), plus the three
+  `dm_*.png` outputs and the `.ipynb_checkpoints` file → `2-Completed-Session/`
+- `3-Training/train_logistic_regression_baseline.py`, `train_xgboost_baseline.py`,
+  `train_lstm_model.py` → `2-Completed-Session/`
+- `2-Infra`, `4-Model-Artifacts`, `5-Pipeline` left untouched, as instructed
+
+**New files:**
+- `0-Shared/clean_events.py` — bot-removal + sessionization logic extracted
+  from `build_prefix_dataset.py` (used only by the decision-time lineage;
+  `2-Completed-Session` scripts keep their own inline copy so their frozen
+  numbers never depend on a file outside that folder)
+- `2-Completed-Session/README.md` — exact frozen-lineage warning text, as required
+- `5-Results/README.md` + `.gitkeep` — empty, documents the
+  `<lineage>__<model>__<split>__<k>__<seed>.json` naming protocol
+
+**Path fixes** (paths only, no logic/numbers changed, per the frozen-lineage
+constraint): `DATA_PATH` in `stage1_data_cleaning_feature_engineering.py`
+now points at `../1-Data/raw/1-events.csv`; every reference to
+`cart_session_features.csv` across the 4 frozen training/eval scripts (plus
+the notebook) now points at `../1-Data/completed-session/cart_session_features.csv`;
+`build_prefix_dataset.py`'s `DATA_PATH`/`OUTPUT_PATH` now resolve via
+`Path(__file__)` against the new `1-Data/raw/` and `1-Data/decision-time/`
+locations. `.gitignore` updated (`1-Data/raw/*.csv`, `2-Completed-Session/*.csv`
+replacing the old `0-Offline/...` pattern). `pyarrow>=25.0.0` pinned in
+`2-Infra/requirements.txt` (parquet write had failed on a fresh environment
+otherwise).
+
+**Verification — every touched/moved script re-run from its new location:**
+all six frozen scripts plus `build_prefix_dataset.py` ran clean.
+`build_prefix_dataset.py` reproduced numbers byte-identical to the
+pre-refactor run (91,036 total rows, same per-k counts), confirming the
+`0-Shared` extraction changed nothing. `stage1_data_cleaning_feature_engineering.py`
+needed `seaborn` installed (pre-existing missing dependency, now pinned) and
+`PYTHONIOENCODING=utf-8` (pre-existing Windows console-encoding issue,
+worked around via env var, not by editing the frozen script) — with those,
+it reproduced 35 bot visitors / 491 events / 43,917 cart sessions / AUC
+0.9969 exactly.
+
+**Git history:** confirmed preserved — `git show --stat` on the auto-commit
+shows every relocation as a pure rename (0 insertions/deletions), including
+`cart_session_features.csv` and `prefix_dataset.parquet`.
+
+## 2026-07-29 — Reconstructed the missing reanalysis script (prompt 5, item 1)
+
+Workshop paper Tables 4 and 5 (the paper's primary evidence) traced to no
+script in the repo — this was the actual reason "seed-42" looked ambiguous
+in `docs/results_provenance.md`: the source script had simply never been
+committed. Wrote `2-Completed-Session/reanalysis_controlled_audit.py` from
+the paper's stated protocol (4 feature configs × 5 seeds, training-only
+99th-percentile cap and standardization, `scale_pos_weight` for XGBoost;
+seed-42-only DecisionTree/RandomForest on `original_completed` for Table 4).
+Asserts Equation 2 before fitting; also asserts an explicitly-flagged
+*assumed* form of "Equation 3" (`has_transaction == transaction_count > 0`)
+since the addendum didn't specify its formula.
+
+Reran and diffed against every published Table 4/5 cell: **15 of 16 Table 5
+cells and all 4 Table 4 cells reproduce to within ±0.0007** of published
+values. One cell exceeds the ±0.002 tolerance: `timing_only` XGBoost PR-AUC
+(reproduced 0.6563 vs. published 0.6530, diff +0.0033) — reported as-is, not
+adjusted to force a match. Full diff tables and the reproduction protocol
+are in `docs/results_provenance.md`. 42 metric JSON files written to
+`5-Results/`.
+
+## 2026-07-29 — The 0.9969 population question, answered directly (item 2)
+
+Read the exact code path in `stage1_data_cleaning_feature_engineering.py`:
+line 462 (`session_features = df_clean.groupby('session_key').apply(...)`)
+builds features over the **full bot-cleaned event log — all 1,761,640
+sessions**, with no cart-session filter applied anywhere before the 5-fold
+CV at line 566. Workshop Table 3's population claim (1,761,640) matches the
+code exactly. The Final Report's 0.825 LR figure is a different population
+(43,917 cart sessions, from `cart_session_features.csv`). Both are
+internally consistent with their own code; per instruction, this was
+reported, not reconciled.
+
 ## Open items / next steps
-- [ ] Decide whether `pyarrow` should be pinned in a requirements file so
-      the parquet write doesn't fail fresh again.
-- [ ] Point `3-Training` scripts (or a new training script) at
-      `prefix_dataset.parquet` instead of the old leaky `cart_session_features.csv`.
-- [ ] Re-run the leakage-audit-style sanity checks (AUC, feature correlations)
-      on the new prefix dataset to confirm the point-in-time features still
-      carry predictive signal without the removed leakage paths.
+- [x] Pin `pyarrow` — done in the reorg pass.
+- [x] Pin `seaborn` — done alongside the results-provenance rerun-drift pass.
+- [ ] Point a new training script at `prefix_dataset.parquet` (decision-time
+      lineage) to get its own AUC/feature-correlation numbers — nothing in
+      `3-Decision-Time/` does any modeling yet, only feature building.
+- [ ] Table 8 (LSTM iterations 1–4) is marked permanently UNTRACED in
+      `docs/results_provenance.md` — no sweep code exists and none has been
+      reconstructed, per explicit instruction not to attempt it.
+- [ ] Decide whether the `timing_only` XGBoost PR-AUC discrepancy (+0.0033)
+      is worth a footnote in the paper itself, or is within normal
+      re-run variance given seed/library-version differences.
