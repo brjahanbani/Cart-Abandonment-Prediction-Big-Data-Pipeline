@@ -1,0 +1,14 @@
+{
+  "population": "all_eligible",
+  "split": "temporal",
+  "k": 5,
+  "seed": 55,
+  "model": "LogisticRegression",
+  "n_total": 4874,
+  "positive_rate": 0.22035289290110793,
+  "roc_auc": 0.5804651162790697,
+  "pr_auc": 0.28662954661468565,
+  "n_train": 3899,
+  "n_test": 975,
+  "test_positive_rate": 0.2205128205128205
+}

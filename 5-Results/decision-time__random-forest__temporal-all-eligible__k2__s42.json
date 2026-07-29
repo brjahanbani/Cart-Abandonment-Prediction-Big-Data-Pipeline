@@ -1,0 +1,14 @@
+{
+  "population": "all_eligible",
+  "split": "temporal",
+  "k": 2,
+  "seed": 42,
+  "model": "RandomForest",
+  "n_total": 12276,
+  "positive_rate": 0.20682632779406973,
+  "roc_auc": 0.6005777523365586,
+  "pr_auc": 0.27742935128862106,
+  "n_train": 9820,
+  "n_test": 2456,
+  "test_positive_rate": 0.20317589576547232
+}

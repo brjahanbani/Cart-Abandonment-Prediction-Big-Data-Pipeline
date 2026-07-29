@@ -1,0 +1,14 @@
+{
+  "population": "all_eligible",
+  "split": "visitor-grouped",
+  "k": 3,
+  "seed": 55,
+  "model": "XGBoost",
+  "n_total": 8513,
+  "positive_rate": 0.21144132503230353,
+  "roc_auc": 0.567819329903922,
+  "pr_auc": 0.23876045588790787,
+  "n_train": 6850,
+  "n_test": 1663,
+  "test_positive_rate": 0.19903788334335537
+}

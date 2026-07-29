@@ -1,0 +1,14 @@
+{
+  "population": "fixed_cohort",
+  "split": "visitor-grouped",
+  "k": 0,
+  "seed": 33,
+  "model": "LogisticRegression",
+  "n_total": 1846,
+  "positive_rate": 0.2313109425785482,
+  "roc_auc": 0.5412505623031939,
+  "pr_auc": 0.2497060673916185,
+  "n_train": 1483,
+  "n_test": 363,
+  "test_positive_rate": 0.21487603305785125
+}

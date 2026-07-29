@@ -1,0 +1,14 @@
+{
+  "population": "all_eligible",
+  "split": "visitor-grouped",
+  "k": 3,
+  "seed": 42,
+  "model": "DecisionTree",
+  "n_total": 8513,
+  "positive_rate": 0.21144132503230353,
+  "roc_auc": 0.5556867375049194,
+  "pr_auc": 0.24736656664738316,
+  "n_train": 6792,
+  "n_test": 1721,
+  "test_positive_rate": 0.21092388146426497
+}

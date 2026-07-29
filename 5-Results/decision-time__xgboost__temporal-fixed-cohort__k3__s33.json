@@ -1,0 +1,14 @@
+{
+  "population": "fixed_cohort",
+  "split": "temporal",
+  "k": 3,
+  "seed": 33,
+  "model": "XGBoost",
+  "n_total": 1846,
+  "positive_rate": 0.2313109425785482,
+  "roc_auc": 0.4997301880974407,
+  "pr_auc": 0.2623130487278351,
+  "n_train": 1476,
+  "n_test": 370,
+  "test_positive_rate": 0.25405405405405407
+}

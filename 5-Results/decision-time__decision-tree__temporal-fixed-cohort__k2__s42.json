@@ -1,0 +1,14 @@
+{
+  "population": "fixed_cohort",
+  "split": "temporal",
+  "k": 2,
+  "seed": 42,
+  "model": "DecisionTree",
+  "n_total": 1846,
+  "positive_rate": 0.2313109425785482,
+  "roc_auc": 0.5403176071538699,
+  "pr_auc": 0.29159482455765007,
+  "n_train": 1476,
+  "n_test": 370,
+  "test_positive_rate": 0.25405405405405407
+}

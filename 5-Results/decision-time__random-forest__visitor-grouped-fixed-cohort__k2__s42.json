@@ -1,0 +1,14 @@
+{
+  "population": "fixed_cohort",
+  "split": "visitor-grouped",
+  "k": 2,
+  "seed": 42,
+  "model": "RandomForest",
+  "n_total": 1846,
+  "positive_rate": 0.2313109425785482,
+  "roc_auc": 0.5814819543752127,
+  "pr_auc": 0.30211579834023217,
+  "n_train": 1491,
+  "n_test": 355,
+  "test_positive_rate": 0.24788732394366197
+}
