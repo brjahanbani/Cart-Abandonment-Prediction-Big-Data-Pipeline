@@ -16,15 +16,9 @@ reproduce ALREADY-PUBLISHED numbers, not to explore new ones. Per the
 anything to force a closer match to the paper. If the numbers disagree,
 report the disagreement.
 
-ASSUMPTION FLAGGED EXPLICITLY: the prompt that produced this script mentions
-"Equation 3" without stating its formula. The only other row-level identity
-available in cart_session_features.csv is the relationship between
-has_transaction and transaction_count, so Equation 3 is assumed here to be:
+Equation 3 (paper): y_s = 1[transaction_count_s > 0], i.e.
 
     has_transaction == 1  if and only if  transaction_count > 0
-
-If this is not the paper's actual Equation 3, that assertion will need to be
-corrected — it is NOT invented to make anything else in this script pass.
 
 FOUR FEATURE CONFIGURATIONS (exactly as specified):
     target_proxy       : event_count, view_count, addtocart_count
@@ -213,16 +207,14 @@ def main():
     )
     print("Equation 2 confirmed: transaction_count == event_count - view_count - addtocart_count")
 
-    # --- Equation 3 (assumption — see module docstring): has_transaction is
-    # exactly the indicator of transaction_count > 0.
+    # --- Equation 3: y_s = 1[transaction_count_s > 0]
     eq3_lhs = df["has_transaction"].astype(int)
     eq3_rhs = (df["transaction_count"] > 0).astype(int)
     assert (eq3_lhs == eq3_rhs).all(), (
-        "Equation 3 (assumed: has_transaction == (transaction_count > 0)) failed "
-        "for at least one row. This assumption may not match the paper's actual "
-        "Equation 3 — see module docstring."
+        "Equation 3 failed: has_transaction != (transaction_count > 0) for at "
+        "least one row."
     )
-    print("Equation 3 (assumed form) confirmed: has_transaction == (transaction_count > 0)")
+    print("Equation 3 confirmed: has_transaction == (transaction_count > 0)")
     print()
 
     # ------------------------------------------------------------------

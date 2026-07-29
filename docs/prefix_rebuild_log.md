@@ -229,9 +229,11 @@ committed. Wrote `2-Completed-Session/reanalysis_controlled_audit.py` from
 the paper's stated protocol (4 feature configs × 5 seeds, training-only
 99th-percentile cap and standardization, `scale_pos_weight` for XGBoost;
 seed-42-only DecisionTree/RandomForest on `original_completed` for Table 4).
-Asserts Equation 2 before fitting; also asserts an explicitly-flagged
-*assumed* form of "Equation 3" (`has_transaction == transaction_count > 0`)
-since the addendum didn't specify its formula.
+Asserts Equation 2 and Equation 3 (`y_s = 1[transaction_count_s > 0]`,
+i.e. `has_transaction == transaction_count > 0`) before fitting — the
+addendum's Equation 3 formula was confirmed correct by the user, so the
+script's implementation needed no change; only the flagged-caveat language
+in the script/docs was removed.
 
 Reran and diffed against every published Table 4/5 cell: **15 of 16 Table 5
 cells and all 4 Table 4 cells reproduce to within ±0.0007** of published

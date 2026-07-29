@@ -31,15 +31,10 @@ five seeds, training-only 99th-percentile cap and standardization,
 `scale_pos_weight` for XGBoost) and reads the same frozen
 `1-Data/completed-session/cart_session_features.csv` as the rest of this
 lineage. It asserts Equation 2
-(`transaction_count == event_count - view_count - addtocart_count`) before
-fitting anything.
-
-**One assumption is flagged, not guessed past:** the prompt that specified
-this script's protocol referenced an "Equation 3" without giving its
-formula. The script assumes `has_transaction == (transaction_count > 0)`,
-the only other row-level identity available in the data, and asserts it
-explicitly. If the paper's actual Equation 3 differs from this, that
-assertion needs correcting — it was not invented to force a match.
+(`transaction_count == event_count - view_count - addtocart_count`) and
+Equation 3 (`y_s = 1[transaction_count_s > 0]`, i.e.
+`has_transaction == (transaction_count > 0)`) before fitting anything. Both
+hold for every row.
 
 ### Full Table 5 diff (ROC-AUC, mean ± sd across 5 seeds)
 
