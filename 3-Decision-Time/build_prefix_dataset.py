@@ -29,31 +29,32 @@ script: every step is written so it can be explained line-by-line in a
 viva, not so it runs fast. Pandas only, no Spark.
 """
 
+import sys
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
+
+# The cleaning + sessionization logic (bot removal, 30-minute session gap)
+# is shared with nothing else in the repo except this decision-time lineage
+# — it lives in 0-Shared/clean_events.py, a sibling of this script's parent
+# directory, so it can be imported without installing the project as a
+# package.
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "0-Shared"))
+from clean_events import load_raw_events, remove_bots, sessionize  # noqa: E402
 
 # ============================================================================
 # CONSTANTS
 # ============================================================================
 
-# Raw input file. Path is relative to the repo root (where this script lives).
-# We deliberately read from the ORIGINAL raw file and redo all cleaning here,
-# rather than reusing events_clean.csv, so the whole pipeline is reproducible
-# end-to-end from a single source file.
-DATA_PATH = "0-Offline/Data Cleaning & Feature Engineering/1-events.csv"
+# Raw input file. Path is relative to THIS script's location
+# (3-Decision-Time/), so it resolves regardless of the caller's cwd.
+DATA_PATH = str(Path(__file__).resolve().parent.parent / "1-Data" / "raw" / "1-events.csv")
 
 # Output file for the final point-in-time dataset.
-OUTPUT_PATH = "prefix_dataset.parquet"
-
-# A new session starts when the gap since the visitor's previous event
-# exceeds this many milliseconds (30 minutes — standard e-commerce timeout).
-SESSION_GAP_MS = 30 * 60 * 1000
-
-# Bot-detection thresholds (identical to the original Stage-1 script, so the
-# cleaned population matches the numbers already published).
-BOT_VELOCITY_THRESHOLD = 500   # events/hour above this => flag as bot
-BOT_CV_THRESHOLD = 0.05        # inter-event-interval CV below this => flag as bot
-BOT_MIN_EVENTS = 20            # need >= this many events to trust a CV estimate
+OUTPUT_PATH = str(
+    Path(__file__).resolve().parent.parent / "1-Data" / "decision-time" / "prefix_dataset.parquet"
+)
 
 # The cutoffs we evaluate, expressed as "k events after the first add-to-cart".
 # k = 0 means "the moment of the first add-to-cart itself".
@@ -81,18 +82,7 @@ print("=" * 78)
 print("STEP 1 — Load raw events and remove bot traffic")
 print("=" * 78)
 
-df_raw = pd.read_csv(
-    DATA_PATH,
-    header=0,
-    names=["timestamp", "visitorid", "event", "itemid", "transactionid"],
-    dtype={
-        "timestamp": "int64",
-        "visitorid": "int64",
-        "event": "category",
-        "itemid": "Int64",
-        "transactionid": "Int64",
-    },
-)
+df_raw = load_raw_events(DATA_PATH)
 
 print(f"Loaded {len(df_raw):,} raw rows")
 
@@ -102,67 +92,18 @@ assert len(df_raw) == EXPECTED_RAW_ROWS, (
     "Stop and check whether 1-events.csv was replaced or truncated."
 )
 
-# Keep the raw per-event-type mix so we can later assert the bot filter
-# removed zero transaction events (transactions are rare and precious —
-# losing even one to a "bot" rule would be a red flag, not routine cleaning).
-raw_event_mix = df_raw["event"].value_counts().to_dict()
+# remove_bots() sorts by (visitorid, timestamp), flags bots via the velocity
+# rule (>500 events/hour) OR the CV rule (inter-event-interval CV < 0.05,
+# with a minimum of 20 events to trust the estimate), and drops them.
+df_clean, bot_stats = remove_bots(df_raw)
 
-# Sort by (visitorid, timestamp) — required before any gap/interval computation.
-df = df_raw.sort_values(["visitorid", "timestamp"]).reset_index(drop=True)
-
-# --- Bot signal 1: velocity (events per hour) ------------------------------
-visitor_stats = df.groupby("visitorid").agg(
-    total_events=("event", "count"),
-    span_ms=("timestamp", lambda x: x.max() - x.min()),
-).reset_index()
-
-# clip(lower=1/60) avoids division by zero for visitors whose events all
-# happen within under a minute (or at the exact same millisecond).
-visitor_stats["span_hours"] = (visitor_stats["span_ms"] / 3_600_000).clip(lower=1 / 60)
-visitor_stats["events_per_hour"] = visitor_stats["total_events"] / visitor_stats["span_hours"]
-visitor_stats["is_bot_velocity"] = visitor_stats["events_per_hour"] > BOT_VELOCITY_THRESHOLD
-
-# --- Bot signal 2: regularity (coefficient of variation of intervals) ------
-def compute_cv(group):
-    """CV = std / mean of inter-event gaps. Bots fire at near-constant
-    intervals (CV close to 0); humans do not."""
-    intervals = group["timestamp"].sort_values().diff().dropna()
-    if len(intervals) < BOT_MIN_EVENTS:
-        return np.nan
-    mean_iv = intervals.mean()
-    if mean_iv == 0:
-        return 0.0
-    return intervals.std() / mean_iv
-
-visitor_cv = (
-    df.groupby("visitorid")
-    .apply(compute_cv, include_groups=False)
-    .rename("interval_cv")
-    .reset_index()
-)
-visitor_stats = visitor_stats.merge(visitor_cv, on="visitorid")
-visitor_stats["is_bot_cv"] = (
-    visitor_stats["interval_cv"].notna() & (visitor_stats["interval_cv"] < BOT_CV_THRESHOLD)
-)
-
-# A visitor is a bot if EITHER signal fires.
-visitor_stats["is_bot"] = visitor_stats["is_bot_velocity"] | visitor_stats["is_bot_cv"]
-bot_visitors = set(visitor_stats.loc[visitor_stats["is_bot"], "visitorid"])
-
-n_bot_visitors = len(bot_visitors)
-n_bot_events = df["visitorid"].isin(bot_visitors).sum()
+n_bot_visitors = bot_stats["n_bot_visitors"]
+n_bot_events = bot_stats["n_bot_events"]
+clean_event_mix = bot_stats["clean_event_mix"]
+transactions_removed_by_bot_filter = bot_stats["transactions_removed_by_bot_filter"]
 
 print(f"Visitors flagged as bots : {n_bot_visitors:,}")
 print(f"Events removed           : {n_bot_events:,}")
-
-df_clean = df[~df["visitorid"].isin(bot_visitors)].copy()
-clean_event_mix = df_clean["event"].value_counts().to_dict()
-
-# How many of the removed events were transactions? We expect zero: bots
-# view/add-to-cart at machine speed, they don't complete purchases.
-transactions_removed_by_bot_filter = (
-    raw_event_mix.get("transaction", 0) - clean_event_mix.get("transaction", 0)
-)
 print(f"Transactions removed by bot filter: {transactions_removed_by_bot_filter}")
 
 # ---------------------------------------------------------------------------
@@ -201,25 +142,9 @@ print("=" * 78)
 print("STEP 2 — Sessionize (30-minute inactivity gap)")
 print("=" * 78)
 
-# df_clean is already sorted by (visitorid, timestamp) because it was
-# filtered from df, which was sorted earlier. Re-sort anyway to be explicit
-# and safe against any future reordering of the cleaning step above.
-df_clean = df_clean.sort_values(["visitorid", "timestamp"]).reset_index(drop=True)
-
-df_clean["prev_ts"] = df_clean.groupby("visitorid")["timestamp"].shift(1)
-df_clean["gap_ms"] = df_clean["timestamp"] - df_clean["prev_ts"]
-
-# A new session starts on a visitor's very first event (gap_ms is NaN) or
-# whenever the gap to the previous event exceeds the 30-minute timeout.
-df_clean["new_session"] = (
-    df_clean["gap_ms"].isna() | (df_clean["gap_ms"] > SESSION_GAP_MS)
-).astype(int)
-
-# Cumulative sum per visitor gives each visitor's sessions numbers 1, 2, 3, ...
-df_clean["session_id"] = df_clean.groupby("visitorid")["new_session"].cumsum()
-df_clean["session_key"] = (
-    df_clean["visitorid"].astype(str) + "_" + df_clean["session_id"].astype(str)
-)
+# sessionize() re-sorts by (visitorid, timestamp) and assigns session_key
+# using the standard 30-minute inactivity timeout.
+df_clean = sessionize(df_clean)
 
 n_sessions = df_clean["session_key"].nunique()
 print(f"Sessions reconstructed: {n_sessions:,}")

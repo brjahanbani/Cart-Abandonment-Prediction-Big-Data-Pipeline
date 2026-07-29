@@ -1,8 +1,9 @@
 # Large data files — too big for GitHub (>100 MB)
 events_clean.csv
 
-# CSV files in new 0-Offline folder — excluded from commits
-0-Offline/Data Cleaning & Feature Engineering/*.csv
+# Raw source CSVs and frozen-lineage byproduct exports — excluded from commits
+1-Data/raw/*.csv
+2-Completed-Session/*.csv
 
 # Python
 __pycache__/

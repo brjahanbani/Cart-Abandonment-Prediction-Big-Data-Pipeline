@@ -56,7 +56,7 @@ print('Libraries loaded successfully.')
 
 # ── Load events.csv ──────────────────────────────────────────────────────────
 # Adjust path if your file is in a different location
-DATA_PATH = 'events.csv'
+DATA_PATH = '../1-Data/raw/1-events.csv'
 
 df_raw = pd.read_csv(
     DATA_PATH,

@@ -32,7 +32,7 @@ PALETTE = ['#1F4E79', '#2E75B6', '#70AD47', '#ED7D31']
 
 print('Libraries loaded.')
 
-df = pd.read_csv('../1-Data/cart_session_features.csv')
+df = pd.read_csv('../1-Data/completed-session/cart_session_features.csv')
 print(f'Loaded: {len(df):,} sessions  |  columns: {list(df.columns)}')
 print(df.head())
 

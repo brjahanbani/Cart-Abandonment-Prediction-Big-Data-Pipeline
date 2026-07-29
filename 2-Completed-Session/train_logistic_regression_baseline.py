@@ -24,7 +24,7 @@ print("Logistic Regression Baseline — Online-Computable Features")
 print("=" * 70)
 
 events = pd.read_csv("../1-Data/events_clean.csv")
-sessions = pd.read_csv("../1-Data/cart_session_features.csv")
+sessions = pd.read_csv("../1-Data/completed-session/cart_session_features.csv")
 
 # Recompute time features using only non-transaction events
 ev_no_txn = events[events["event"] != "transaction"].copy()

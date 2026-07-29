@@ -47,7 +47,7 @@ print("=" * 60)
 # ── Load data ─────────────────────────────────────────────────────────────────
 print("\n[1/5] Loading data...")
 events   = pd.read_csv('../1-Data/events_clean.csv')
-sessions = pd.read_csv('../1-Data/cart_session_features.csv')
+sessions = pd.read_csv('../1-Data/completed-session/cart_session_features.csv')
 print(f"  Events   : {len(events):,}")
 print(f"  Sessions : {len(sessions):,}")
 
