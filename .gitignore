@@ -5,6 +5,11 @@ events_clean.csv
 1-Data/raw/*.csv
 2-Completed-Session/*.csv
 
+# Manuscript: build outputs, and the journal-branded PDFs sent to IJACSA
+# (kept locally as the reference the build checks against; not published)
+paper/build/
+paper/ijacsa/submitted-pdf/
+
 # Python
 __pycache__/
 *.py[cod]
