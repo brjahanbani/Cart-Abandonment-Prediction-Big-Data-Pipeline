@@ -1,0 +1,293 @@
+{
+  "script": "2-Completed-Session/build_cart_session_table.py",
+  "run": {
+    "timestamp_utc": "2026-09-30T21:26:18+00:00",
+    "git_commit": "26443615410255b94299e86d77f538bf8b61983e",
+    "git_dirty": true,
+    "python": "3.13.7",
+    "platform": "Windows-10-10.0.19045-SP0",
+    "libraries": {
+      "pandas": "2.3.2",
+      "numpy": "2.3.3"
+    }
+  },
+  "inputs": {
+    "raw_events": {
+      "path": "1-Data\\raw\\1-events.csv",
+      "sha256": "3745aa83238b1e6d44d8fda209807899f420084398f94ddf745f3cbcfecbf9e7"
+    }
+  },
+  "cart_session_table": {
+    "path": "1-Data\\completed-session\\cart_session_features.csv",
+    "rows": 43917,
+    "rebuilt_sha256": "70499d9642bc79561b0ce64894fdb52bd556e3664684ac25a9e0bba5ab60ae3c",
+    "status": "byte-identical to committed file"
+  },
+  "row_for_row_check": {
+    "status": "match",
+    "artifact": "1-Data\\events_clean.csv",
+    "artifact_sha256": "fcb36ea0896ad87643b5eb5f6a0fc63481f9a7b8192b40d2b7c8259b8e65519a",
+    "rows_artifact": 2755610,
+    "rows_rebuilt": 2755610,
+    "columns_compared": [
+      "visitorid",
+      "timestamp",
+      "event",
+      "itemid"
+    ],
+    "session_key_also_matches": true
+  },
+  "stats": {
+    "raw_events": 2756101,
+    "observation_days": 137,
+    "observation_start": "2015-05-03",
+    "observation_end": "2015-09-18",
+    "bot_visitors": 35,
+    "bot_events": 491,
+    "bot_events_view": 431,
+    "bot_events_addtocart": 60,
+    "bot_events_transaction": 0,
+    "clean_events": 2755610,
+    "sessions_all": 1761640,
+    "cart_sessions": 43917,
+    "cart_visitors": 37715,
+    "purchased_sessions": 11932,
+    "abandoned_sessions": 31985,
+    "purchased_pct": 27.17,
+    "abandoned_pct": 72.83,
+    "eq2_rows_holding": 43917,
+    "eq3_rows_holding": 43917,
+    "median_session_age_purchased": 821.03,
+    "median_session_age_purchased_unrounded": 821.03,
+    "median_session_age_abandoned": 172.44,
+    "median_session_age_abandoned_unrounded": 172.44,
+    "median_interval_purchased": 183.29,
+    "median_interval_purchased_unrounded": 183.289,
+    "median_interval_abandoned": 72.77,
+    "median_interval_abandoned_unrounded": 72.768,
+    "median_cart_recency_purchased": 330.82,
+    "median_cart_recency_purchased_unrounded": 330.815,
+    "median_cart_recency_abandoned": 0.0,
+    "median_cart_recency_abandoned_unrounded": 0.0,
+    "zero_cart_recency_pct_purchased": 2.1,
+    "zero_cart_recency_pct_abandoned": 60.6,
+    "txn_before_first_cart": 172,
+    "txn_between_first_and_last_cart": 1573,
+    "txn_before_and_between_overlap": 23,
+    "txn_between_only": 1550,
+    "label_ambiguous_sessions": 1722,
+    "label_ambiguous_pct": 3.9
+  },
+  "paper_checks": [
+    {
+      "quantity": "raw_events",
+      "paper": 2756101,
+      "computed": 2756101,
+      "where_in_paper": "\u00a7III-A",
+      "match": true
+    },
+    {
+      "quantity": "observation_days",
+      "paper": 137,
+      "computed": 137,
+      "where_in_paper": "\u00a7III-A",
+      "match": true
+    },
+    {
+      "quantity": "clean_events",
+      "paper": 2755610,
+      "computed": 2755610,
+      "where_in_paper": "\u00a7III-A, \u00a7VII",
+      "match": true
+    },
+    {
+      "quantity": "bot_visitors",
+      "paper": 35,
+      "computed": 35,
+      "where_in_paper": "\u00a7III-A, \u00a7VII",
+      "match": true
+    },
+    {
+      "quantity": "bot_events",
+      "paper": 491,
+      "computed": 491,
+      "where_in_paper": "\u00a7III-A, \u00a7VII",
+      "match": true
+    },
+    {
+      "quantity": "bot_events_view",
+      "paper": 431,
+      "computed": 431,
+      "where_in_paper": "\u00a7VII",
+      "match": true
+    },
+    {
+      "quantity": "bot_events_addtocart",
+      "paper": 60,
+      "computed": 60,
+      "where_in_paper": "\u00a7VII",
+      "match": true
+    },
+    {
+      "quantity": "bot_events_transaction",
+      "paper": 0,
+      "computed": 0,
+      "where_in_paper": "\u00a7VII ('no transactions')",
+      "match": true
+    },
+    {
+      "quantity": "sessions_all",
+      "paper": 1761640,
+      "computed": 1761640,
+      "where_in_paper": "Table III",
+      "match": true
+    },
+    {
+      "quantity": "cart_sessions",
+      "paper": 43917,
+      "computed": 43917,
+      "where_in_paper": "Abstract, Table I",
+      "match": true
+    },
+    {
+      "quantity": "cart_visitors",
+      "paper": 37715,
+      "computed": 37715,
+      "where_in_paper": "Table I, \u00a7III-A",
+      "match": true
+    },
+    {
+      "quantity": "abandoned_sessions",
+      "paper": 31985,
+      "computed": 31985,
+      "where_in_paper": "Table I",
+      "match": true
+    },
+    {
+      "quantity": "purchased_sessions",
+      "paper": 11932,
+      "computed": 11932,
+      "where_in_paper": "Table I",
+      "match": true
+    },
+    {
+      "quantity": "abandoned_pct",
+      "paper": 72.83,
+      "computed": 72.83,
+      "where_in_paper": "Table I",
+      "match": true
+    },
+    {
+      "quantity": "purchased_pct",
+      "paper": 27.17,
+      "computed": 27.17,
+      "where_in_paper": "Table I, Abstract, Fig. 4",
+      "match": true
+    },
+    {
+      "quantity": "median_session_age_purchased",
+      "paper": 821.03,
+      "computed": 821.03,
+      "where_in_paper": "\u00a7IV-B, Fig. 2",
+      "match": true
+    },
+    {
+      "quantity": "median_session_age_abandoned",
+      "paper": 172.44,
+      "computed": 172.44,
+      "where_in_paper": "\u00a7IV-B, Fig. 2",
+      "match": true
+    },
+    {
+      "quantity": "median_interval_purchased",
+      "paper": 183.29,
+      "computed": 183.29,
+      "where_in_paper": "Fig. 2",
+      "match": true
+    },
+    {
+      "quantity": "median_interval_abandoned",
+      "paper": 72.77,
+      "computed": 72.77,
+      "where_in_paper": "Fig. 2",
+      "match": true
+    },
+    {
+      "quantity": "median_cart_recency_purchased",
+      "paper": 330.82,
+      "computed": 330.82,
+      "where_in_paper": "\u00a7IV-B, Fig. 2",
+      "match": true
+    },
+    {
+      "quantity": "median_cart_recency_abandoned",
+      "paper": 0.0,
+      "computed": 0.0,
+      "where_in_paper": "\u00a7IV-B, Fig. 2",
+      "match": true
+    },
+    {
+      "quantity": "zero_cart_recency_pct_abandoned",
+      "paper": 60.6,
+      "computed": 60.6,
+      "where_in_paper": "\u00a7IV-B",
+      "match": true
+    },
+    {
+      "quantity": "zero_cart_recency_pct_purchased",
+      "paper": 2.1,
+      "computed": 2.1,
+      "where_in_paper": "\u00a7IV-B",
+      "match": true
+    },
+    {
+      "quantity": "txn_before_first_cart",
+      "paper": 172,
+      "computed": 172,
+      "where_in_paper": "\u00a7IV-C",
+      "match": true
+    },
+    {
+      "quantity": "txn_between_first_and_last_cart",
+      "paper": 1573,
+      "computed": 1573,
+      "where_in_paper": "\u00a7IV-C",
+      "match": true
+    },
+    {
+      "quantity": "label_ambiguous_sessions",
+      "paper": 1745,
+      "computed": 1722,
+      "where_in_paper": "\u00a7IV-C",
+      "match": false,
+      "known_discrepancy": "The paper adds the two groups (172 + 1,573 = 1,745; '\u00a7IV-C: A further 1,573 sessions ...'), but 23 sessions belong to both: they have a transaction before their first addtocart AND one between their first and last addtocart. The distinct count is 1,722; the 'further' group has 1,550 sessions not already among the 172."
+    },
+    {
+      "quantity": "label_ambiguous_pct",
+      "paper": 4.0,
+      "computed": 3.9,
+      "where_in_paper": "Abstract, \u00a7IV-C",
+      "match": false,
+      "known_discrepancy": "Follows from label_ambiguous_sessions: 1,722 / 43,917 = 3.92%, printed 3.9%, not 4.0%."
+    },
+    {
+      "quantity": "eq2_rows_holding",
+      "paper": 43917,
+      "computed": 43917,
+      "where_in_paper": "\u00a7IV-A ('holds for all 43,917 rows')",
+      "match": true
+    },
+    {
+      "quantity": "eq3_rows_holding",
+      "paper": 43917,
+      "computed": 43917,
+      "where_in_paper": "\u00a7IV-A ('for every row')",
+      "match": true
+    }
+  ],
+  "all_paper_values_match": false,
+  "known_discrepancies": [
+    "label_ambiguous_pct",
+    "label_ambiguous_sessions"
+  ]
+}

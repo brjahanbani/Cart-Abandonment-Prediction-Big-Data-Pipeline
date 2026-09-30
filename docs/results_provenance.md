@@ -26,6 +26,34 @@ a rerun — where they differ, both values are shown side by side.
 | Workshop paper Table 4 — seed-42 benchmark, `original_completed`, ROC-AUC | `2-Completed-Session/reanalysis_controlled_audit.py` (reconstructed — see [Reanalysis reconstruction](#reanalysis-reconstruction) below) | 43,917 cart sessions, `original_completed` feature config (7 features: view_count, addtocart_count, view_to_cart_ratio, unique_items_count, session_age_seconds, inter_event_interval_mean, recency_last_cart_seconds) | single stratified 80/20 split, seed=42; LR/XGB/DT/RF all on the same split | **partial patch** — same leakage profile as Table 7 (timing features span whole session, not point-in-time) | LR 0.8249 (pub 0.825), DT 0.9340 (pub 0.934), RF 0.9837 (pub 0.984), XGB 0.9947 (pub 0.995) — all within ±0.0003 | Yes — reconstructed and reproduces to within tolerance |
 | Workshop paper Table 5 — 4 feature configs × {LR, XGB} × 5 seeds, ROC-AUC & PR-AUC | `2-Completed-Session/reanalysis_controlled_audit.py` (reconstructed — see below) | 43,917 cart sessions, 4 feature configs (`target_proxy`, `original_completed`, `timing_only`, `counts_only`) | stratified 80/20, seeds 11/22/33/42/55; 99th-percentile cap fit on train only; training-only standardization for LR | **fully leaky** (`target_proxy` — includes `event_count`, a whole-session total) down to **partial patch** (`original_completed`, `timing_only`, `counts_only` — none touch `event_count` but still use whole-session timing features) | 7 of 8 ROC-AUC cells match to ≤0.0007; 7 of 8 PR-AUC cells match to ≤0.0005; **one cell differs beyond tolerance**: `timing_only` XGB PR-AUC = 0.6563 vs published 0.6530 (diff +0.0033) — reported, not adjusted | Yes — see full per-cell diff table below |
 | `prefix_dataset.parquet` — 43,745 rows at k=0, etc. | `3-Decision-Time/build_prefix_dataset.py` | 43,917 cart sessions minus 172 dropped (transaction occurred *before* the session's first addtocart) = 43,745 eligible at k=0; shrinks per cutoff k as sessions convert or run out of events | no train/test split — this script only builds features, one row per `(session_key, cutoff_k)` | **point-in-time** — every feature is computed only from events at or before the cutoff; the label (`y`) is the only place future information is used, by design | k=0 → 43,745 rows (26.88% positive), k=1 → 19,782, k=2 → 12,276, k=3 → 8,513, k=5 → 4,874, k=10 → 1,846 (exact match) | Yes |
+| IJACSA paper — every descriptive number: §III-A data counts, Table I, Table III session count, §IV-A Eq. 2–3, §IV-B / Fig. 2 medians and zero-recency shares, §IV-C label ambiguity, §VII bot-event composition and row-for-row check | `2-Completed-Session/build_cart_session_table.py` (added 2026-10-01) → `5-Results/completed-session__descriptive-stats.json` | raw events → 1,761,640 sessions → 43,917 cart sessions; also rebuilds `cart_session_features.csv` | none (descriptive) | n/a — describes the audited completed-session table | 27 of 29 quoted values match exactly; cart-session table **byte-identical** to the committed CSV; cleaned events match `1-Data/events_clean.csv` row for row (and on `session_key`). **Two values are wrong in the paper** — see [Descriptive-statistics check](#descriptive-statistics-check) | Yes |
+
+## Descriptive-statistics check
+
+`2-Completed-Session/build_cart_session_table.py` (run 2026-10-01, commit
+`2644361`, pandas 2.3.2, numpy 2.3.3, ≈10 min) goes from
+`1-Data/raw/1-events.csv` to the cart-session table using stage1's loading,
+sessionization, bot rules and feature function copied verbatim, and checks
+each descriptive number the paper quotes. The table it produces is
+byte-identical to `1-Data/completed-session/cart_session_features.csv`
+(SHA-256 `70499d96…ae3c`), so this is now the committed producer of the
+paper's input table (previously only a Jupyter checkpoint file).
+
+**Paper error — label-ambiguity count (§IV-C and Abstract).** The paper
+reports 172 sessions with a transaction before the first add-to-cart and "a
+further 1,573" with a transaction strictly between the first and last
+add-to-cart, "together 1,745 sessions, 4.0%". The two groups overlap: 23
+sessions are in both. The distinct count is **1,722 (3.92%, i.e. 3.9%)**;
+only 1,550 of the 1,573 are "further". The published values are left
+unchanged here; the discrepancy is recorded in the script
+(`KNOWN_DISCREPANCIES`) and in the JSON. It does not affect any model result —
+the label-ambiguity count is descriptive and not an input to any table.
+
+**Not an error — cart-recency median (§IV-B, Fig. 2).** The purchased-class
+median is exactly 330.815 (the mean of the two middle values 330.71 and
+330.92); the paper's 330.82 is correct half-up rounding. (A first run of the
+script printed 330.81 because Python's `round()` works on the binary float
+330.81499…; the script now rounds half-up on the decimal value.)
 
 ## Reanalysis reconstruction
 

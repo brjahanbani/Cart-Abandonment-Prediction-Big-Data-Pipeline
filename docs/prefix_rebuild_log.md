@@ -291,7 +291,10 @@ LR under the temporal split is deterministic (sd = 0 across seeds).
       reconstructed, per explicit instruction not to attempt it.
 - [x] `timing_only` XGBoost PR-AUC discrepancy (+0.0033) — disclosed in the
       submitted paper's Reproducibility Statement (§VII); published value kept.
-- [ ] Raw events → `cart_session_features.csv` has no committed producer
-      (only `2-Completed-Session/.ipynb_checkpoints/stage1_eda-checkpoint.ipynb`,
-      cell 23); several descriptive numbers in the paper have no script.
-      Being addressed next.
+- [x] Raw events → `cart_session_features.csv` producer, and a script for
+      every descriptive number in the paper — done 2026-10-01,
+      `2-Completed-Session/build_cart_session_table.py` (table byte-identical;
+      see `docs/results_provenance.md` § Descriptive-statistics check).
+- [ ] **Paper error found:** label-ambiguity total is 1,722 (3.9%), not
+      1,745 (4.0%) — 23 sessions double-counted. Correct it in the IJACSA
+      revision (if one is requested), any arXiv v2, and the extension paper.

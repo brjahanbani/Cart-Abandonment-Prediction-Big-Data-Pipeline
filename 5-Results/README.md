@@ -3,6 +3,7 @@ Metric outputs land here, one JSON file per run.
 | Written by | Files |
 |---|---|
 | `2-Completed-Session/reanalysis_controlled_audit.py` | 42 `completed-session__*.json` — paper Tables IV–V (4 feature configs × {LR, XGBoost} × 5 seeds, plus DT/RF at seed 42) |
+| `2-Completed-Session/build_cart_session_table.py` | `completed-session__descriptive-stats.json` — every descriptive number in the paper, paper vs computed, with git commit, timestamp, library versions and input hashes |
 | `3-Decision-Time/train_prefix_models.py` | 288 `decision-time__*.json`, plus `curve_all_eligible.csv` and `curve_fixed_cohort.csv` (not in the submitted paper) |
 
 Filename protocol (required, not optional — files leave the repo, folders do not):
