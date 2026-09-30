@@ -255,15 +255,43 @@ code exactly. The Final Report's 0.825 LR figure is a different population
 internally consistent with their own code; per instruction, this was
 reported, not reconciled.
 
+## 2026-07-29 — Decision-time models (commit c6a1b7f)
+
+`3-Decision-Time/train_prefix_models.py` trains LR/XGBoost (5 seeds) and
+DT/RF (seed 42) on `prefix_dataset.parquet` under a visitor-grouped split and
+a temporal split, for two populations (all eligible at k; fixed cohort that
+survives to k=10), with seed-42 bootstrap 95% CIs. Outputs: 288
+`5-Results/decision-time__*.json` plus `curve_all_eligible.csv` /
+`curve_fixed_cohort.csv`. Headline: ROC-AUC ≈ 0.63–0.65 at k=0 (all
+eligible), ≈ 0.55–0.61 for k ≥ 1. Caveats: the fixed cohort is small (1,846
+sessions, ≈370 test), so most across-k differences are within the CIs;
+LR under the temporal split is deterministic (sd = 0 across seeds).
+
+## 2026-09-30 — Paper status and manuscript sources
+
+- The paper was submitted to IJACSA (MS-17-10-0048, under peer review) and to
+  arXiv (2026-09-21, cs.AI, by Prof. Sayar). It does **not** include the
+  decision-time results above; those are extension material.
+- `paper/` added: the IJACSA source, the exact arXiv submission, and a build
+  with branding checks. Provenance in `paper/README.md`.
+- Planned next: (1) one committed script from raw events to
+  `cart_session_features.csv` that also emits every descriptive number quoted
+  in the paper as JSON with commit hash, timestamp and library versions;
+  (2) a point-in-time item-property join study (as-of vs latest-value on
+  `item_properties`) layered on the prefix dataset, aimed at a DEEM@SIGMOD
+  short paper.
+
 ## Open items / next steps
 - [x] Pin `pyarrow` — done in the reorg pass.
 - [x] Pin `seaborn` — done alongside the results-provenance rerun-drift pass.
-- [ ] Point a new training script at `prefix_dataset.parquet` (decision-time
-      lineage) to get its own AUC/feature-correlation numbers — nothing in
-      `3-Decision-Time/` does any modeling yet, only feature building.
+- [x] Point a new training script at `prefix_dataset.parquet` — done,
+      `3-Decision-Time/train_prefix_models.py` (see 2026-07-29 entry above).
 - [ ] Table 8 (LSTM iterations 1–4) is marked permanently UNTRACED in
       `docs/results_provenance.md` — no sweep code exists and none has been
       reconstructed, per explicit instruction not to attempt it.
-- [ ] Decide whether the `timing_only` XGBoost PR-AUC discrepancy (+0.0033)
-      is worth a footnote in the paper itself, or is within normal
-      re-run variance given seed/library-version differences.
+- [x] `timing_only` XGBoost PR-AUC discrepancy (+0.0033) — disclosed in the
+      submitted paper's Reproducibility Statement (§VII); published value kept.
+- [ ] Raw events → `cart_session_features.csv` has no committed producer
+      (only `2-Completed-Session/.ipynb_checkpoints/stage1_eda-checkpoint.ipynb`,
+      cell 23); several descriptive numbers in the paper have no script.
+      Being addressed next.

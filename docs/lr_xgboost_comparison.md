@@ -1,5 +1,9 @@
 # Logistic Regression & XGBoost: What's Different Between the Two Versions?
 
+> **Folder names below predate the 2026-07-29 reorganisation.** `0-Offline/`
+> and `3-Training/` are now both `2-Completed-Session/` (same scripts,
+> unchanged). See `docs/prefix_rebuild_log.md` for the reorg.
+
 We have two places in the project that train a Logistic Regression and an
 XGBoost model on the same cart-session data:
 

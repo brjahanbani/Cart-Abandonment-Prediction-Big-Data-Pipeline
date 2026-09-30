@@ -11,7 +11,7 @@ Builds the manuscript targets and checks the arXiv target is unbranded.
 Targets (outputs land in paper/build/<target>/paper.pdf, gitignored):
   ijacsa-nonblind  paper/ijacsa/IJACSA_Final_NonBlind_Reference_Copy.tex, unchanged
   ijacsa-anon      paper/ijacsa/IJACSA_Submission_Anonymized_Babak_Cart_Abandonment.tex, unchanged
-  arxiv            paper/arxiv/main.tex (non-blind source minus IJACSA branding)
+  arxiv            paper/arxiv-v2/main.tex (non-blind source minus IJACSA branding)
 
 Checks run on the arxiv target (the script exits non-zero if any fails):
   1. Source: main.tex body (\\begin{document} onward) is identical to the
@@ -39,7 +39,7 @@ IJACSA = PAPER / "ijacsa"
 BUILD = PAPER / "build"
 NONBLIND_TEX = IJACSA / "IJACSA_Final_NonBlind_Reference_Copy.tex"
 ANON_TEX = IJACSA / "IJACSA_Submission_Anonymized_Babak_Cart_Abandonment.tex"
-ARXIV_TEX = PAPER / "arxiv" / "main.tex"
+ARXIV_TEX = PAPER / "arxiv-v2" / "main.tex"
 SUPPORT = [IJACSA / "IEEEtran.cls", IJACSA / "references_revised.bib"]
 
 TARGETS = {"ijacsa-nonblind": NONBLIND_TEX, "ijacsa-anon": ANON_TEX, "arxiv": ARXIV_TEX}
@@ -110,9 +110,9 @@ def check_source():
     expected = re.sub(r"\n% NON-BLIND / camera-ready.*?camera-ready manuscript\.\n\n", "\n",
                       body(nonblind), flags=re.S)
     if body(arxiv) != expected:
-        failures.append("arxiv/main.tex body differs from the non-blind IJACSA body")
+        failures.append("arxiv-v2/main.tex body differs from the non-blind IJACSA body")
     if re.search(r"ijacsa|thesai", arxiv, re.IGNORECASE):
-        failures.append("arxiv/main.tex still mentions ijacsa/thesai")
+        failures.append("arxiv-v2/main.tex still mentions ijacsa/thesai")
     return failures
 
 

@@ -1,43 +1,43 @@
-# Cart Abandonment Prediction — Big Data Pipeline
-## Kafka + Spark + MongoDB + LSTM
+# Cart Abandonment Prediction — Leakage Audit + Big Data Pipeline
 
-### Folder layout
+## Paper
+
+"When Offline Performance Misleads: A Leakage Audit of Completed-Session
+Features for Cart-Abandonment Prediction" — Babak Rad Jahanbani, Ahmet Sayar.
+
+- **IJACSA:** manuscript MS-17-10-0048, under peer review (as of 2026-09-30).
+- **arXiv:** submitted 2026-09-21, cs.AI.
+
+Manuscript sources (IJACSA and arXiv) and the build are in
+[paper/](paper/README.md). Every published number is mapped to the script that
+produces it in [docs/results_provenance.md](docs/results_provenance.md).
+
+## Folder layout
 | Folder | Contents |
 |---|---|
-| `0-Offline/` | `offline_cart_abandonment_prediction.py` — offline data-mining comparison (Logistic Regression, Decision Tree, Random Forest, XGBoost) on `1-Data/cart_session_features.csv` |
-| `1-Data/` | `events_clean.csv`, `cart_session_features.csv` — from Stage 1 preprocessing |
+| `0-Shared/` | `clean_events.py` — bot removal + 30-minute sessionization, used by the decision-time lineage |
+| `1-Data/` | `raw/` (Retail Rocket CSVs — gitignored, download from Kaggle), `completed-session/cart_session_features.csv`, `decision-time/prefix_dataset.parquet`, `events_clean.csv` (gitignored) |
+| `2-Completed-Session/` | **Frozen.** The scripts behind every number in the submitted paper, leakage included by design (see its README). `reanalysis_controlled_audit.py` produces the primary evidence (Tables IV–V) |
 | `2-Infra/` | `docker-compose.yml`, `requirements.txt` |
-| `3-Training/` | `train_lstm_model.py` (main model), plus baseline scripts (`train_logistic_regression_baseline.py`, `train_xgboost_baseline.py`) |
-| `4-Model-Artifacts/` | `lstm_model.pth`, `model_config.pkl`, `scaler.pkl` — produced by `3-Training/train_lstm_model.py` |
-| `5-Pipeline/` | `kafka_producer.py`, `spark_consumer.py`, `live_scorer.py`, `dashboard_server.py`, `pipeline_dashboard.html` |
-| `docs/` | `lr_xgboost_comparison.md` — why `0-Offline`'s LR/XGBoost AUC differs from `3-Training`'s leakage-corrected baselines |
+| `3-Decision-Time/` | Point-in-time rebuild: `build_prefix_dataset.py`, `train_prefix_models.py` (not in the submitted paper) |
+| `4-Model-Artifacts/` | `lstm_model.pth`, `model_config.pkl`, `scaler.pkl` — produced by `2-Completed-Session/train_lstm_model.py` |
+| `5-Pipeline/` | Live demo: `kafka_producer.py`, `spark_consumer.py`, `live_scorer.py`, `dashboard_server.py`, `pipeline_dashboard.html` (engineering context, not evidence) |
+| `5-Results/` | Metric JSONs (`<lineage>__<model>__<split>__<k>__<seed>.json`) and decision-time curves |
+| `docs/` | `results_provenance.md`, `prefix_rebuild_log.md`, `lr_xgboost_comparison.md` |
+| `paper/` | IJACSA source, arXiv submission, `build.py` |
 
 Scripts reference `1-Data/` and `4-Model-Artifacts/` via relative paths
 (e.g. `../1-Data/events_clean.csv`), so **run each script from inside its own
-folder** (`cd` into it first) — the `../` paths resolve from there. Data and
-model artifacts exist in exactly one place each; no copies to keep in sync.
+folder** (`cd` into it first) — the `../` paths resolve from there.
 
-### Project files & run order
+### Live demo — run order
 | File | Purpose | Run order |
 |---|---|---|
-| `0-Offline/offline_cart_abandonment_prediction.py` | Offline model comparison (data mining stage) | Step 0 (optional) |
 | `2-Infra/docker-compose.yml` | Launches Kafka + MongoDB | Step 1 |
-| `3-Training/train_lstm_model.py` | Trains LSTM, saves lstm_model.h5 | Step 2 |
-| `5-Pipeline/kafka_producer.py` | Replays events_clean.csv to Kafka | Step 3 |
+| `2-Completed-Session/train_lstm_model.py` | Trains LSTM, saves to `4-Model-Artifacts/` | Step 3 |
+| `5-Pipeline/kafka_producer.py` | Replays events_clean.csv to Kafka | Step 4 |
 | `5-Pipeline/spark_consumer.py` | Reads Kafka → features → MongoDB | Step 4 |
-| `5-Pipeline/live_scorer.py` | Reads MongoDB → LSTM → predictions | Step 5 |
-
----
-
-### Step 0 — Offline data-mining comparison (optional)
-```bash
-cd 0-Offline
-python offline_cart_abandonment_prediction.py
-```
-Trains Logistic Regression, Decision Tree, Random Forest, and XGBoost on
-`1-Data/cart_session_features.csv` and saves comparison charts
-(`dm_results_comparison.png`, `dm_roc_curves.png`, `dm_feature_importance.png`)
-into `0-Offline/`. Independent of the live pipeline below.
+| `5-Pipeline/live_scorer.py` | Reads MongoDB → LSTM → predictions | Step 4 |
 
 ---
 
@@ -60,11 +60,11 @@ pip install -r 2-Infra/requirements.txt
 
 ### Step 3 — Train the LSTM (run once, takes ~2-3 minutes)
 ```bash
-cd 3-Training
+cd 2-Completed-Session
 python train_lstm_model.py
 ```
 Outputs directly into `4-Model-Artifacts/`: `lstm_model.pth`, `scaler.pkl`, `model_config.pkl`.
-Retraining overwrites them in place — `5-Pipeline/live_scorer.py` picks up the new weights automatically.
+Retraining overwrites them in place (they are tracked in git) — `5-Pipeline/live_scorer.py` picks up the new weights automatically.
 
 ---
 

@@ -1,5 +1,11 @@
 # Results Provenance
 
+> **Paper naming (updated 2026-09-30).** "Workshop paper" below is the
+> manuscript now under review at IJACSA (MS-17-10-0048) and on arXiv
+> (submitted 2026-09-21); sources in `paper/`. Its table numbering carried
+> over unchanged: workshop Table 3 / 4 / 5 = IJACSA Table III / IV / V.
+> "Final Report" is the earlier course report, which is not published.
+
 One row per published number. Every row was confirmed by reading the exact
 script listed — no number below is guessed from a table caption alone. Paths
 are current post-reorg (`2-Completed-Session/`, `3-Decision-Time/`); see
