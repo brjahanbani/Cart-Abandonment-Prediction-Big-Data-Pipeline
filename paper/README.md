@@ -4,11 +4,11 @@
 Features for Cart-Abandonment Prediction" — Babak Rad Jahanbani, Ahmet Sayar.
 Corresponding author: babakrad.jahanbani@bahcesehir.edu.tr.
 
-## Status (as of 2026-09-30)
+## Status (as of 2026-10-12)
 
 | Venue | Status |
 |---|---|
-| IJACSA (thesai.org) | Manuscript **MS-17-10-0048**, **under peer review**. Not accepted. |
+| IJACSA (thesai.org) | Manuscript **MS-17-10-0048**, **accepted for publication** (acceptance email October 2026). Registration fee paid (split equally between both authors; the university is expected to reimburse in January 2027). Reviewer feedback is released after registration. Still to come: reviewer feedback → camera-ready → DOI. |
 | arXiv | **Submitted 2026-09-21** by Prof. Ahmet Sayar, category cs.AI, submission ID `submit/8109238`. The public `arXiv:YYMM.NNNNN` identifier is not recorded here yet — add it once announced. |
 
 ## Contents

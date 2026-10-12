@@ -296,5 +296,16 @@ LR under the temporal split is deterministic (sd = 0 across seeds).
       `2-Completed-Session/build_cart_session_table.py` (table byte-identical;
       see `docs/results_provenance.md` § Descriptive-statistics check).
 - [ ] **Paper error found:** label-ambiguity total is 1,722 (3.9%), not
-      1,745 (4.0%) — 23 sessions double-counted. Correct it in the IJACSA
-      revision (if one is requested), any arXiv v2, and the extension paper.
+      1,745 (4.0%) — 23 sessions double-counted. The paper was accepted
+      (October 2026): correct it in the **camera-ready** version (Abstract and
+      §IV-C), then in an arXiv v2 and the extension paper.
+
+## 2026-10-12 — Paper 1 accepted
+
+IJACSA accepted MS-17-10-0048 for publication (acceptance email, October
+2026). Registration fee paid, split between the two authors; the university
+is expected to reimburse it in January 2027. Reviewer feedback is released
+after registration. Next for this paper: read the reviewer feedback, prepare
+the camera-ready version with the 1,722 / 3.9% correction, then record the
+DOI in `paper/README.md` and add it to the arXiv entry as the journal
+reference.

@@ -5,7 +5,7 @@
 "When Offline Performance Misleads: A Leakage Audit of Completed-Session
 Features for Cart-Abandonment Prediction" — Babak Rad Jahanbani, Ahmet Sayar.
 
-- **IJACSA:** manuscript MS-17-10-0048, under peer review (as of 2026-09-30).
+- **IJACSA:** manuscript MS-17-10-0048, **accepted for publication** (October 2026); DOI pending.
 - **arXiv:** submitted 2026-09-21, cs.AI.
 
 Manuscript sources (IJACSA and arXiv) and the build are in
