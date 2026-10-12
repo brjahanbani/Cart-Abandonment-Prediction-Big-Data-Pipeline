@@ -1,0 +1,1482 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PhD Strategy Dashboard — KTH Track</title>
+  <meta name="description" content="Strategy dashboard for Babak Rad Jahanbani: KTH-first PhD positioning, two-track research spine, and the runway to Autumn 2027.">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            aurora: {
+              50: '#f0fdfa',
+              100: '#ccfbf1',
+              400: '#2dd4bf',
+              500: '#14b8a6',
+              600: '#0d9488',
+              900: '#115e59',
+            },
+            nordic: {
+              900: '#0b0f19',
+              800: '#111827',
+              700: '#1f2937',
+              600: '#374151',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            heading: ['Outfit', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0b0f19;
+      color: #e5e7eb;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Outfit', sans-serif;
+    }
+    .glass-panel {
+      background: rgba(17, 24, 39, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .glass-panel-hover:hover {
+      border-color: rgba(45, 212, 191, 0.3);
+      box-shadow: 0 0 25px rgba(20, 184, 166, 0.1);
+      transform: translateY(-2px);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .aurora-gradient-text {
+      background: linear-gradient(135deg, #2dd4bf 0%, #3b82f6 50%, #10b981 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .aurora-glow {
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(20, 184, 166, 0.15) 0%, rgba(59, 130, 246, 0.05) 50%, transparent 100%);
+      filter: blur(40px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .scroll-indicator::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .scroll-indicator::-webkit-scrollbar-track {
+      background: rgba(17, 24, 39, 0.5);
+    }
+    .scroll-indicator::-webkit-scrollbar-thumb {
+      background: rgba(45, 212, 191, 0.3);
+      border-radius: 3px;
+    }
+    .scroll-indicator::-webkit-scrollbar-thumb:hover {
+      background: rgba(45, 212, 191, 0.5);
+    }
+  </style>
+</head>
+<body class="relative min-h-screen overflow-x-hidden scroll-indicator pb-16">
+
+  <!-- Ambient Glow Effects -->
+  <div class="aurora-glow top-10 left-10"></div>
+  <div class="aurora-glow top-[40%] right-10"></div>
+  <div class="aurora-glow bottom-20 left-[30%]"></div>
+
+  <!-- Main Container -->
+  <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+
+    <!-- Header Section -->
+    <header class="mb-8 rounded-2xl overflow-hidden glass-panel relative border border-white/10 shadow-2xl">
+      <!-- Banner Image Header -->
+      <div class="h-64 sm:h-72 w-full overflow-hidden relative">
+        <div class="w-full h-full" style="background:radial-gradient(900px 320px at 18% 12%, rgba(20,184,166,.40) 0%, transparent 60%),radial-gradient(760px 300px at 82% 0%, rgba(59,130,246,.34) 0%, transparent 62%),linear-gradient(135deg,#0b0f19 0%,#102a33 48%,#0b0f19 100%);"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-nordic-900 via-nordic-900/40 to-transparent"></div>
+        
+        <!-- Header Text Details overlayed -->
+        <div class="absolute bottom-6 left-6 right-6 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+          <div>
+            <div class="flex items-center gap-2 mb-2">
+              <span class="px-3 py-1 text-xs font-semibold tracking-wider text-aurora-400 bg-aurora-950/60 rounded-full border border-aurora-500/30 uppercase">Strategic Positioning Plan</span>
+              <span class="px-3 py-1 text-xs font-semibold tracking-wider text-blue-400 bg-blue-950/60 rounded-full border border-blue-500/30 uppercase">KTH first · Sweden &amp; Norway</span>
+            </div>
+            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white mb-1">PhD Strategy Dashboard</h1>
+            <p class="text-sm sm:text-base text-gray-300">
+              For <span class="text-aurora-400 font-semibold">Babak Rad Jahanbani</span> · Two tracks: an e-commerce burst benchmark for elastic stateful streaming (thesis), and point-in-time correctness in feature pipelines (papers)
+            </p>
+          </div>
+          <div class="text-left md:text-right shrink-0">
+            <p class="text-xs text-gray-400 uppercase tracking-widest font-mono">Target Start</p>
+            <p class="text-lg font-bold text-white font-heading">Autumn 2027</p>
+            <p class="text-xs text-aurora-400 font-mono flex items-center md:justify-end gap-1 mt-0.5">
+              <i data-lucide="calendar" class="w-3.5 h-3.5"></i> 9-month runway · Oct 2026 → Jun 2027
+            </p>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Key Metrics Cards -->
+    <section class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div class="glass-panel rounded-xl p-4 flex items-center gap-4 relative overflow-hidden group">
+        <div class="p-3 rounded-lg bg-aurora-950/50 border border-aurora-500/20 text-aurora-400">
+          <i data-lucide="briefcase" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <p class="text-xs text-gray-400 uppercase tracking-wider">Nordic PhD Status</p>
+          <h3 class="text-base sm:text-lg font-bold text-white">Salaried Employee</h3>
+          <p class="text-xs text-gray-400">Not just a student</p>
+        </div>
+      </div>
+      
+      <div class="glass-panel rounded-xl p-4 flex items-center gap-4 relative overflow-hidden group">
+        <div class="p-3 rounded-lg bg-blue-950/50 border border-blue-500/20 text-blue-400">
+          <i data-lucide="banknote" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <p class="text-xs text-gray-400 uppercase tracking-wider">Salary Range</p>
+          <h3 class="text-base sm:text-lg font-bold text-white">SEK ~33k+/mo (SE)</h3>
+          <p class="text-xs text-gray-400">NOK 530k-620k (NO) · verify current scales</p>
+        </div>
+      </div>
+
+      <div class="glass-panel rounded-xl p-4 flex items-center gap-4 relative overflow-hidden group">
+        <div class="p-3 rounded-lg bg-indigo-950/50 border border-indigo-500/20 text-indigo-400">
+          <i data-lucide="award" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <p class="text-xs text-gray-400 uppercase tracking-wider">Academic Grade</p>
+          <h3 class="text-base sm:text-lg font-bold text-white">3.84 GPA (MSc)</h3>
+          <p class="text-xs text-gray-400">Clears academic bar</p>
+        </div>
+      </div>
+
+      <div class="glass-panel rounded-xl p-4 flex items-center gap-4 relative overflow-hidden group">
+        <div class="p-3 rounded-lg bg-teal-950/50 border border-teal-500/20 text-teal-400">
+          <i data-lucide="check-square" class="w-6 h-6"></i>
+        </div>
+        <div class="w-full">
+          <p class="text-xs text-gray-400 uppercase tracking-wider">Roadmap Progress</p>
+          <h3 id="global-progress" class="text-base sm:text-lg font-bold text-white">0% Complete</h3>
+          <div class="w-full bg-gray-700 h-1.5 rounded-full mt-1 overflow-hidden">
+            <div id="global-progress-bar" class="bg-aurora-400 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Grid Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      
+      <!-- Left Column: SWOT & Research Showcase (2/3 width on large screens) -->
+      <div class="lg:col-span-2 space-y-8">
+        
+        <!-- Interactive SWOT Matrix -->
+        <section class="glass-panel rounded-2xl p-6 relative border border-white/5">
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
+              <i data-lucide="pie-chart" class="text-aurora-400"></i> SWOT Profile Analysis
+            </h2>
+            <span class="text-xs text-gray-400 italic">Click quadrants to inspect details</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Strengths -->
+            <div onclick="selectSwot('strengths')" id="swot-card-strengths" class="glass-panel p-5 rounded-xl cursor-pointer transition-all duration-300 border-l-4 border-l-emerald-500 bg-emerald-950/10 hover:bg-emerald-950/20 border-white/5">
+              <div class="flex justify-between items-center mb-2">
+                <h3 class="font-bold text-emerald-400 flex items-center gap-2">
+                  <i data-lucide="trending-up" class="w-4 h-4"></i> Strengths
+                </h3>
+                <span class="text-xs text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full">Asset</span>
+              </div>
+              <ul class="text-sm text-gray-300 list-disc list-inside space-y-1">
+                <li>10+ yrs build/ops e-commerce &amp; fintech</li>
+                <li>GPA 3.84 in relevant MSc IT program</li>
+                <li>Accepted journal paper (IJACSA, Oct 2026): 3 leakage mechanisms, 43,917 sessions</li>
+                <li>Rare asset: real retail burst &amp; skew knowledge</li>
+              </ul>
+            </div>
+
+            <!-- Weaknesses -->
+            <div onclick="selectSwot('weaknesses')" id="swot-card-weaknesses" class="glass-panel p-5 rounded-xl cursor-pointer transition-all duration-300 border-l-4 border-l-amber-500 bg-amber-950/10 hover:bg-amber-950/20 border-white/5">
+              <div class="flex justify-between items-center mb-2">
+                <h3 class="font-bold text-amber-400 flex items-center gap-2">
+                  <i data-lucide="trending-down" class="w-4 h-4"></i> Weaknesses
+                </h3>
+                <span class="text-xs text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded-full">Gap</span>
+              </div>
+              <ul class="text-sm text-gray-300 list-disc list-inside space-y-1">
+                <li>One accepted paper, single-author track record still thin</li>
+                <li>Venue of first submission carries limited weight</li>
+                <li>Single-dataset result; repo not yet fully reproducible</li>
+                <li>Systems coding ramp still in progress (Flink/PyFlink)</li>
+              </ul>
+            </div>
+
+            <!-- Opportunities -->
+            <div onclick="selectSwot('opportunities')" id="swot-card-opportunities" class="glass-panel p-5 rounded-xl cursor-pointer transition-all duration-300 border-l-4 border-l-blue-500 bg-blue-950/10 hover:bg-blue-950/20 border-white/5">
+              <div class="flex justify-between items-center mb-2">
+                <h3 class="font-bold text-blue-400 flex items-center gap-2">
+                  <i data-lucide="sparkles" class="w-4 h-4"></i> Opportunities
+                </h3>
+                <span class="text-xs text-blue-500 bg-blue-500/10 px-2 py-0.5 rounded-full">Leverage</span>
+              </div>
+              <ul class="text-sm text-gray-300 list-disc list-inside space-y-1">
+                <li>No open retail burst benchmark exists (Nexmark is synthetic)</li>
+                <li>Carbone + Dowling at KTH form one coherent story</li>
+                <li>DEEM@SIGMOD short-paper route (4 pages)</li>
+                <li>WASP funding + industrial PhD route in parallel</li>
+              </ul>
+            </div>
+
+            <!-- Threats -->
+            <div onclick="selectSwot('threats')" id="swot-card-threats" class="glass-panel p-5 rounded-xl cursor-pointer transition-all duration-300 border-l-4 border-l-rose-500 bg-rose-950/10 hover:bg-rose-950/20 border-white/5">
+              <div class="flex justify-between items-center mb-2">
+                <h3 class="font-bold text-rose-400 flex items-center gap-2">
+                  <i data-lucide="shield-alert" class="w-4 h-4"></i> Threats
+                </h3>
+                <span class="text-xs text-rose-500 bg-rose-500/10 px-2 py-0.5 rounded-full">Risk</span>
+              </div>
+              <ul class="text-sm text-gray-300 list-disc list-inside space-y-1">
+                <li>Systems labs reward <em>building</em>, not auditing</li>
+                <li>First submission's venue won't impress a systems committee</li>
+                <li>Highly competitive Nordic CS applicant pools</li>
+                <li>Lumpy, project-tied funding cycles</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- SWOT Deep Dive Panel -->
+          <div id="swot-details" class="mt-6 p-4 rounded-xl border border-white/10 bg-nordic-800/80 transition-all duration-300">
+            <h4 id="swot-details-title" class="font-bold text-white mb-2 flex items-center gap-2">
+              <i data-lucide="info" class="w-4 h-4 text-aurora-400"></i> Hover or Select a quadrant above
+            </h4>
+            <div id="swot-details-content" class="text-sm text-gray-400 leading-relaxed">
+              Clicking a quadrant will reveal strategic guidance on how to maximize strengths, mitigate weaknesses, capture opportunities, and navigate threats.
+            </div>
+          </div>
+        </section>
+
+        <!-- Research Spine: two tracks -->
+        <section class="glass-panel rounded-2xl p-6 relative border border-white/5">
+          <div class="flex items-center justify-between mb-2 flex-wrap gap-2">
+            <h2 class="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
+              <i data-lucide="git-branch" class="text-aurora-400"></i> The Research Spine: Two Tracks
+            </h2>
+            <span class="px-2 py-1 rounded text-xs font-semibold bg-rose-950/50 text-rose-400 border border-rose-500/30">AUC 0.9947 → 0.63 once leakage is removed</span>
+          </div>
+          <p class="text-sm text-gray-400 mb-6">
+            One intellectual core, two outputs. The question in both is identical: <strong class="text-gray-200">what was knowable at time t?</strong>
+            Offline, that question is point-in-time correctness. In a running system, it is event time and watermarks.
+          </p>
+
+          <!-- Track cards -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div class="p-4 rounded-xl bg-blue-950/15 border border-blue-500/25">
+              <div class="flex items-center justify-between mb-1">
+                <h4 class="font-bold text-blue-300 text-sm flex items-center gap-1.5">
+                  <i data-lucide="target" class="w-4 h-4"></i> Track 1 — Primary (MSc thesis)
+                </h4>
+                <span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-300 border border-blue-500/20">ACTIVE</span>
+              </div>
+              <p class="text-xs text-gray-300 leading-relaxed">
+                An <strong>open e-commerce burst workload</strong> for elastic stateful streaming. Nexmark — the synthetic auction benchmark the field evaluates on — measures steady-state throughput.
+                The benefits claimed for disaggregated state in Flink 2.0 are realised during <strong>disruption</strong>: bursts, rescaling, recovery. Nexmark generates none of them.
+                Deliverable: a generator, not a dataset.
+              </p>
+            </div>
+            <div class="p-4 rounded-xl bg-emerald-950/12 border border-emerald-500/25">
+              <div class="flex items-center justify-between mb-1">
+                <h4 class="font-bold text-emerald-300 text-sm flex items-center gap-1.5">
+                  <i data-lucide="check-circle-2" class="w-4 h-4"></i> Track 2 — Closing (papers)
+                </h4>
+                <span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">CLOSE BY DEC</span>
+              </div>
+              <p class="text-xs text-gray-300 leading-relaxed">
+                The leakage audit, finished and shipped. Paper 1 accepted at IJACSA (Oct 2026); arXiv preprint posted 21 Sep.
+                Paper 2 reframed as <strong>point-in-time correctness in feature pipelines</strong> — as-of join vs latest-value join over item-property snapshots — targeting a 4-page DEEM@SIGMOD short paper.
+                Cart abandonment becomes the case study, not the subject.
+              </p>
+            </div>
+          </div>
+
+          <!-- Thesis architecture -->
+          <div class="glass-panel p-4 rounded-xl border border-white/5 bg-nordic-900/60 mb-4">
+            <h3 class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3 flex items-center gap-1.5">
+              <i data-lucide="layers" class="w-3.5 h-3.5 text-aurora-400"></i> Thesis architecture — what gets measured
+            </h3>
+            <div class="w-full overflow-x-auto scroll-indicator py-4">
+              <div class="min-w-[600px] flex justify-between items-center px-4 relative">
+                <div class="absolute top-[40px] left-[50px] right-[50px] h-0.5 bg-gradient-to-r from-teal-500 via-blue-500 to-emerald-500 opacity-30 z-0"></div>
+                <div class="flex flex-col items-center gap-2 z-10 w-24"><div class="w-16 h-16 rounded-xl bg-teal-950/80 border border-teal-500/50 flex flex-col items-center justify-center text-teal-400 shadow-lg shadow-teal-500/10"><i data-lucide="message-square" class="w-6 h-6 mb-0.5"></i><span class="text-[9px] font-bold font-mono">KAFKA</span></div><span class="text-[10px] text-center text-gray-400 font-medium">Retail event stream</span></div><div class="text-teal-400 text-lg">➔</div><div class="flex flex-col items-center gap-2 z-10 w-24"><div class="w-16 h-16 rounded-xl bg-blue-950/80 border border-blue-500/50 flex flex-col items-center justify-center text-blue-400 shadow-lg shadow-blue-500/10"><i data-lucide="zap" class="w-6 h-6 mb-0.5"></i><span class="text-[9px] font-bold font-mono">FLINK</span></div><span class="text-[10px] text-center text-gray-400 font-medium">Stateful operators</span></div><div class="text-blue-400 text-lg">➔</div><div class="flex flex-col items-center gap-2 z-10 w-24"><div class="w-16 h-16 rounded-xl bg-emerald-950/80 border border-emerald-500/50 flex flex-col items-center justify-center text-emerald-400 shadow-lg shadow-emerald-500/10"><i data-lucide="hard-drive" class="w-6 h-6 mb-0.5"></i><span class="text-[9px] font-bold font-mono">ForSt</span></div><span class="text-[10px] text-center text-gray-400 font-medium">Disaggregated state</span></div><div class="text-emerald-400 text-lg">➔</div><div class="flex flex-col items-center gap-2 z-10 w-24"><div class="w-16 h-16 rounded-xl bg-amber-950/80 border border-amber-500/50 flex flex-col items-center justify-center text-amber-400 shadow-lg shadow-amber-500/10"><i data-lucide="activity" class="w-6 h-6 mb-0.5"></i><span class="text-[9px] font-bold font-mono">METRICS</span></div><span class="text-[10px] text-center text-gray-400 font-medium">Rescale &amp; recovery cost</span></div>
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-2 mt-2 justify-center">
+              <span class="text-[10px] font-mono px-2 py-1 rounded bg-rose-950/40 text-rose-300 border border-rose-500/25">event: traffic burst</span>
+              <span class="text-[10px] font-mono px-2 py-1 rounded bg-amber-950/40 text-amber-300 border border-amber-500/25">event: rescale 8 → 24</span>
+              <span class="text-[10px] font-mono px-2 py-1 rounded bg-indigo-950/40 text-indigo-300 border border-indigo-500/25">event: failure recovery</span>
+            </div>
+          </div>
+
+          <!-- Legacy demo pipeline -->
+          <details class="glass-panel p-4 rounded-xl border border-white/5 bg-nordic-900/40 mb-6">
+            <summary class="text-xs font-semibold uppercase tracking-widest text-gray-400 cursor-pointer flex items-center gap-1.5">
+              <i data-lucide="box" class="w-3.5 h-3.5 text-gray-500"></i> Engineering demo (built, not research evidence)
+            </summary>
+            <div class="w-full overflow-x-auto scroll-indicator py-4">
+              <div class="min-w-[600px] flex justify-between items-center px-4 relative opacity-80">
+                <div class="absolute top-[40px] left-[50px] right-[50px] h-0.5 bg-gradient-to-r from-teal-500 via-indigo-500 to-rose-500 opacity-25 z-0"></div>
+                <div class="flex flex-col items-center gap-2 z-10 w-24"><div class="w-16 h-16 rounded-xl bg-teal-950/80 border border-teal-500/50 flex flex-col items-center justify-center text-teal-400 shadow-lg shadow-teal-500/10"><i data-lucide="message-square" class="w-6 h-6 mb-0.5"></i><span class="text-[9px] font-bold font-mono">KAFKA</span></div><span class="text-[10px] text-center text-gray-400 font-medium">Session events</span></div><div class="text-teal-400 text-lg">➔</div><div class="flex flex-col items-center gap-2 z-10 w-24"><div class="w-16 h-16 rounded-xl bg-blue-950/80 border border-blue-500/50 flex flex-col items-center justify-center text-blue-400 shadow-lg shadow-blue-500/10"><i data-lucide="zap" class="w-6 h-6 mb-0.5"></i><span class="text-[9px] font-bold font-mono">SPARK</span></div><span class="text-[10px] text-center text-gray-400 font-medium">Feature compute</span></div><div class="text-blue-400 text-lg">➔</div><div class="flex flex-col items-center gap-2 z-10 w-24"><div class="w-16 h-16 rounded-xl bg-indigo-950/80 border border-indigo-500/50 flex flex-col items-center justify-center text-indigo-400 shadow-lg shadow-indigo-500/10"><i data-lucide="database" class="w-6 h-6 mb-0.5"></i><span class="text-[9px] font-bold font-mono">MONGODB</span></div><span class="text-[10px] text-center text-gray-400 font-medium">Aggregated state</span></div><div class="text-indigo-400 text-lg">➔</div><div class="flex flex-col items-center gap-2 z-10 w-24"><div class="w-16 h-16 rounded-xl bg-rose-950/80 border border-rose-500/50 flex flex-col items-center justify-center text-rose-400 shadow-lg shadow-rose-500/10"><i data-lucide="cpu" class="w-6 h-6 mb-0.5"></i><span class="text-[9px] font-bold font-mono">LSTM</span></div><span class="text-[10px] text-center text-gray-400 font-medium">Intent prediction</span></div>
+              </div>
+            </div>
+            <p class="text-[11px] text-gray-500 leading-relaxed">Kafka producer, Spark consumer, MongoDB scorer and a FastAPI dashboard. Real, working, and useful as proof of engineering range — but it is a demo, and the thesis does not rest on it.</p>
+          </details>
+
+          <!-- The two framings -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="p-4 rounded-xl bg-rose-950/10 border border-rose-500/20">
+              <h4 class="font-bold text-rose-400 text-sm mb-1 flex items-center gap-1.5">
+                <i data-lucide="skull" class="w-4 h-4"></i> What the first paper found
+              </h4>
+              <p class="text-xs text-gray-300 leading-relaxed">
+                Three leakage mechanisms across 43,917 cart sessions: arithmetic target reconstruction, endpoint timing contamination, and label ambiguity affecting 4.0% of sessions.
+                Completed-session features reach <strong>0.9947</strong> AUC. Rebuilt at decision time, performance falls to roughly <strong>0.63–0.65</strong> at the first cutoff and <strong>0.55–0.61</strong> thereafter. The honest number is worse than the headline — which is what makes it a finding.
+              </p>
+            </div>
+            <div class="p-4 rounded-xl bg-emerald-950/10 border border-emerald-500/20">
+              <h4 class="font-bold text-emerald-400 text-sm mb-1 flex items-center gap-1.5">
+                <i data-lucide="shield-check" class="w-4 h-4"></i> Why it points at KTH
+              </h4>
+              <p class="text-xs text-gray-300 leading-relaxed">
+                A watermark is a formal, machine-checkable statement of what was knowable at time t — the apparatus streaming systems built for exactly this problem, and that feature pipelines lack.
+                That single idea connects <strong>Carbone</strong> (event-time semantics, state, Flink) and <strong>Dowling</strong> (point-in-time correct feature joins, Hopsworks) into one research identity instead of two unrelated papers.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Interactive Roadmap -->
+        <section id="timeline" class="glass-panel rounded-2xl p-6 relative border border-white/5">
+          <div class="flex items-center justify-between mb-2">
+            <h2 class="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
+              <i data-lucide="compass" class="text-aurora-400"></i> Roadmap to Autumn 2027
+            </h2>
+            <button onclick="resetTimeline()" class="text-xs text-aurora-400 hover:text-aurora-300 flex items-center gap-1">
+              <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Reset Checkboxes
+            </button>
+          </div>
+          <p class="text-xs text-gray-400 mb-6">Hard rule: the leakage track closes in December. From January the benchmark gets everything.</p>
+
+          <!-- Timeline Track -->
+          <div class="space-y-8 relative before:absolute before:inset-0 before:left-4 before:top-2 before:w-[2px] before:bg-white/5 before:z-0">
+
+            <!-- Q1 -->
+            <div class="relative pl-10 z-10 transition-opacity" id="section-q1">
+              <span class="absolute left-0.5 top-0.5 w-7 h-7 rounded-full bg-teal-950/90 border border-teal-400/50 text-teal-400 flex items-center justify-center text-[10px] font-extrabold shadow-md">Q1</span>
+              <div>
+                <div class="flex justify-between items-start mb-2">
+                  <div>
+                    <h3 class="text-lg font-bold text-white">Q1 (Jun – Sep 2026) — done</h3>
+                    <p class="text-xs text-teal-400 font-medium">Report turned into a paper, submitted, supervisors mapped</p>
+                  </div>
+                  <span class="px-2 py-0.5 text-[10px] font-semibold text-teal-400 bg-teal-950/40 border border-teal-500/20 rounded">Complete</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
+                  <label class="flex items-start gap-3 p-3 rounded-lg border border-white/5 bg-nordic-900/40 hover:bg-nordic-900/80 cursor-pointer select-none">
+                    <input type="checkbox" id="task-q1-1" onchange="updateProgress()" class="mt-1 rounded text-aurora-500 focus:ring-aurora-500 bg-nordic-800 border-white/10 w-4 h-4">
+                    <span class="text-xs text-gray-300">Report rewritten as an 8-page paper reframed around the offline-evaluation gap. <span class='text-emerald-400'>Done</span></span>
+                  </label>
+                  <label class="flex items-start gap-3 p-3 rounded-lg border border-white/5 bg-nordic-900/40 hover:bg-nordic-900/80 cursor-pointer select-none">
+                    <input type="checkbox" id="task-q1-2" onchange="updateProgress()" class="mt-1 rounded text-aurora-500 focus:ring-aurora-500 bg-nordic-800 border-white/10 w-4 h-4">
+                    <span class="text-xs text-gray-300">Venue chosen and paper <strong>submitted</strong> (~22 Sep 2026). RecSys/INRA route cancelled. <span class='text-emerald-400'>Done</span></span>
+                  </label>
+                  <label class="flex items-start gap-3 p-3 rounded-lg border border-white/5 bg-nordic-900/40 hover:bg-nordic-900/80 cursor-pointer select-none">
+                    <input type="checkbox" id="task-q1-3" onchange="updateProgress()" class="mt-1 rounded text-aurora-500 focus:ring-aurora-500 bg-nordic-800 border-white/10 w-4 h-4">
+                    <span class="text-xs text-gray-300">Target supervisors mapped: Carbone, Dowling, Kille, Özgöbek. <span class='text-emerald-400'>Done</span></span>
+                  </label>
+                  <label class="flex items-start gap-3 p-3 rounded-lg border border-white/5 bg-nordic-900/40 hover:bg-nordic-900/80 cursor-pointer select-none">
+                    <input type="checkbox" id="task-q1-4" onchange="updateProgress()" class="mt-1 rounded text-aurora-500 focus:ring-aurora-500 bg-nordic-800 border-white/10 w-4 h-4">
+                    <span class="text-xs text-gray-300">Research direction chosen: stream processing, KTH Data Systems Lab. <span class='text-emerald-400'>Done</span></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Q2 -->
+            <div class="relative pl-10 z-10 transition-opacity" id="section-q2">
+              <span class="absolute left-0.5 top-0.5 w-7 h-7 rounded-full bg-blue-950/90 border border-blue-400/50 text-blue-400 flex items-center justify-center text-[10px] font-extrabold shadow-md">Q2</span>
+              <div>
+                <div class="flex justify-between items-start mb-2">
+                  <div>
+                    <h3 class="text-lg font-bold text-white">Q2 (Oct – Nov 2026) — now</h3>
+                    <p class="text-xs text-blue-400 font-medium">Unblock arXiv, make the repo reproducible, learn the ground</p>
+                  </div>
+                  <span class="px-2 py-0.5 text-[10px] font-semibold text-blue-400 bg-blue-950/40 border border-blue-500/20 rounded">Current Phase</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
+                  <label class="flex items-start gap-3 p-3 rounded-lg border border-white/5 bg-nordic-900/40 hover:bg-nordic-900/80 cursor-pointer select-none">
+                    <input type="checkbox" id="task-q2-1" onchange="updateProgress()" class="mt-1 rounded text-aurora-500 focus:ring-aurora-500 bg-nordic-800 border-white/10 w-4 h-4">
+                    <span class="text-xs text-gray-300"><strong>Blocker:</strong> recover the IJACSA LaTeX source from Overleaf, commit it under <code>paper/</code>.</span>
+                  </label>
+                  <label class="flex items-start gap-3 p-3 rounded-lg border border-white/5 bg-nordic-900/40 hover:bg-nordic-900/80 cursor-pointer select-none">
+                    <input type="checkbox" id="task-q2-2" onchange="updateProgress()" class="mt-1 rounded text-aurora-500 focus:ring-aurora-500 bg-nordic-800 border-white/10 w-4 h-4">
+                    <span class="text-xs text-gray-300">Strip journal header/footer, build the unbranded PDF, send source + PDF to Prof. Sayar for arXiv.</span>
+                  </label>
+                  <label class="flex items-start gap-3 p-3 rounded-lg border border-white/5 bg-nordic-900/40 hover:bg-nordic-900/80 cursor-pointer select-none">
+                    <input type="checkbox" id="task-q2-3" onchange="updateProgress()" class="mt-1 rounded text-aurora-500 focus:ring-aurora-500 bg-nordic-800 border-white/10 w-4 h-4">
+                    <span class="text-xs text-gray-300">Close repo gaps 2 &amp; 4: one committed script, raw events → feature table → every descriptive number, with git hash and versions in the JSON.</span>
+                  </label>
+                  <label class="flex items-start gap-3 p-3 rounded-lg border border-white/5 bg-nordic-900/40 hover:bg-nordic-900/80 cursor-pointer select-none">
+                    <input type="checkbox" id="task-q2-4" onchange="updateProgress()" class="mt-1 rounded text-aurora-500 focus:ring-aurora-500 bg-nordic-800 border-white/10 w-4 h-4">
+                    <span class="text-xs text-gray-300">Study §3 (out-of-order, watermarks) and §4 (state management) of the Carbone survey; write the retail equivalent of Nexmark's three-entity model.</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Q3 -->
+            <div class="relative pl-10 z-10 transition-opacity" id="section-q3">
+              <span class="absolute left-0.5 top-0.5 w-7 h-7 rounded-full bg-indigo-950/90 border border-indigo-400/50 text-indigo-400 flex items-center justify-center text-[10px] font-extrabold shadow-md">Q3</span>
+              <div>
+                <div class="flex justify-between items-start mb-2">
+                  <div>
+                    <h3 class="text-lg font-bold text-white">Q3 (Dec 2026 – Feb 2027)</h3>
+                    <p class="text-xs text-indigo-400 font-medium">Ship paper 2, start building the benchmark</p>
+                  </div>
+                  <span class="px-2 py-0.5 text-[10px] font-semibold text-indigo-400 bg-indigo-950/40 border border-indigo-500/20 rounded">Build Phase</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
+                  <label class="flex items-start gap-3 p-3 rounded-lg border border-white/5 bg-nordic-900/40 hover:bg-nordic-900/80 cursor-pointer select-none">
+                    <input type="checkbox" id="task-q3-1" onchange="updateProgress()" class="mt-1 rounded text-aurora-500 focus:ring-aurora-500 bg-nordic-800 border-white/10 w-4 h-4">
+                    <span class="text-xs text-gray-300">Option C: as-of join vs latest-value join over item-property snapshots, on the existing prefix dataset.</span>
+                  </label>
+                  <label class="flex items-start gap-3 p-3 rounded-lg border border-white/5 bg-nordic-900/40 hover:bg-nordic-900/80 cursor-pointer select-none">
+                    <input type="checkbox" id="task-q3-2" onchange="updateProgress()" class="mt-1 rounded text-aurora-500 focus:ring-aurora-500 bg-nordic-800 border-white/10 w-4 h-4">
+                    <span class="text-xs text-gray-300">Write and submit the 4-page DEEM@SIGMOD short paper on point-in-time correctness. <strong>Then close Track 2.</strong></span>
+                  </label>
+                  <label class="flex items-start gap-3 p-3 rounded-lg border border-white/5 bg-nordic-900/40 hover:bg-nordic-900/80 cursor-pointer select-none">
+                    <input type="checkbox" id="task-q3-3" onchange="updateProgress()" class="mt-1 rounded text-aurora-500 focus:ring-aurora-500 bg-nordic-800 border-white/10 w-4 h-4">
+                    <span class="text-xs text-gray-300">Hands-on ramp: replay events in plain Python → point-in-time join in pandas → the same in PyFlink with real watermarks.</span>
+                  </label>
+                  <label class="flex items-start gap-3 p-3 rounded-lg border border-white/5 bg-nordic-900/40 hover:bg-nordic-900/80 cursor-pointer select-none">
+                    <input type="checkbox" id="task-q3-4" onchange="updateProgress()" class="mt-1 rounded text-aurora-500 focus:ring-aurora-500 bg-nordic-800 border-white/10 w-4 h-4">
+                    <span class="text-xs text-gray-300">First version of the burst generator: hot-key arrival and decay, flash-sale shape, growing key cardinality.</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Q4 -->
+            <div class="relative pl-10 z-10 transition-opacity" id="section-q4">
+              <span class="absolute left-0.5 top-0.5 w-7 h-7 rounded-full bg-rose-950/90 border border-rose-400/50 text-rose-400 flex items-center justify-center text-[10px] font-extrabold shadow-md">Q4</span>
+              <div>
+                <div class="flex justify-between items-start mb-2">
+                  <div>
+                    <h3 class="text-lg font-bold text-white">Q4 (Mar – Jun 2027)</h3>
+                    <p class="text-xs text-rose-400 font-medium">Artifact, outreach, applications</p>
+                  </div>
+                  <span class="px-2 py-0.5 text-[10px] font-semibold text-rose-400 bg-rose-950/40 border border-rose-500/20 rounded">Application Phase</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
+                  <label class="flex items-start gap-3 p-3 rounded-lg border border-white/5 bg-nordic-900/40 hover:bg-nordic-900/80 cursor-pointer select-none">
+                    <input type="checkbox" id="task-q4-1" onchange="updateProgress()" class="mt-1 rounded text-aurora-500 focus:ring-aurora-500 bg-nordic-800 border-white/10 w-4 h-4">
+                    <span class="text-xs text-gray-300">Public repo + README: the generator, the rescale/recovery measurements, one reproducing command.</span>
+                  </label>
+                  <label class="flex items-start gap-3 p-3 rounded-lg border border-white/5 bg-nordic-900/40 hover:bg-nordic-900/80 cursor-pointer select-none">
+                    <input type="checkbox" id="task-q4-2" onchange="updateProgress()" class="mt-1 rounded text-aurora-500 focus:ring-aurora-500 bg-nordic-800 border-white/10 w-4 h-4">
+                    <span class="text-xs text-gray-300">Contact Carbone with the artifact link and a 2-page proposal — not a CV-first email.</span>
+                  </label>
+                  <label class="flex items-start gap-3 p-3 rounded-lg border border-white/5 bg-nordic-900/40 hover:bg-nordic-900/80 cursor-pointer select-none">
+                    <input type="checkbox" id="task-q4-3" onchange="updateProgress()" class="mt-1 rounded text-aurora-500 focus:ring-aurora-500 bg-nordic-800 border-white/10 w-4 h-4">
+                    <span class="text-xs text-gray-300">Apply to funded positions: KTH Data Systems Lab, WASP calls, NTNU NorwAI as the second track.</span>
+                  </label>
+                  <label class="flex items-start gap-3 p-3 rounded-lg border border-white/5 bg-nordic-900/40 hover:bg-nordic-900/80 cursor-pointer select-none">
+                    <input type="checkbox" id="task-q4-4" onchange="updateProgress()" class="mt-1 rounded text-aurora-500 focus:ring-aurora-500 bg-nordic-800 border-white/10 w-4 h-4">
+                    <span class="text-xs text-gray-300">Tailor CV, cover letters, references per position. Describe the work, never the venue.</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+      </div>
+      
+      <!-- Right Column: Targets Directory, Outreach Tool, Checklist (1/3 width) -->
+      <div class="space-y-8">
+        
+        <!-- Publication & Artifact Tracker -->
+        <section class="glass-panel rounded-2xl p-6 relative border border-white/5">
+          <h2 class="text-xl font-bold tracking-tight text-white mb-1 flex items-center gap-2">
+            <i data-lucide="clipboard-list" class="text-aurora-400"></i> Output Tracker
+          </h2>
+          <p class="text-xs text-gray-400 mb-4">The weekly check. Status, not plans.</p>
+
+          <div class="space-y-2.5">
+            <div class="p-3 rounded-xl border border-emerald-500/25 bg-emerald-950/10">
+              <div class="flex justify-between items-start gap-2">
+                <h4 class="text-xs font-bold text-white">Paper 1 — Leakage audit</h4>
+                <span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/25 shrink-0">ACCEPTED</span>
+              </div>
+              <p class="text-[11px] text-gray-400 mt-1">IJACSA, MS-17-10-0048 — accepted Oct 2026, fee paid. Next: reviewer feedback → camera-ready (fix 1,745 → 1,722) → DOI. In applications, lead with the finding; the venue goes in the reference.</p>
+            </div>
+
+            <div class="p-3 rounded-xl border border-emerald-500/25 bg-emerald-950/10">
+              <div class="flex justify-between items-start gap-2">
+                <h4 class="text-xs font-bold text-white">arXiv preprint</h4>
+                <span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/25 shrink-0">POSTED</span>
+              </div>
+              <p class="text-[11px] text-gray-400 mt-1">Submitted 21 Sep 2026 by Prof. Sayar (cs.AI). Once the journal DOI exists, add it as the journal reference; a v2 can carry the corrected count and drop the leftover "| Page" footer.</p>
+            </div>
+
+            <div class="p-3 rounded-xl border border-white/5 bg-nordic-900/50">
+              <div class="flex justify-between items-start gap-2">
+                <h4 class="text-xs font-bold text-white">Paper 2 — Point-in-time correctness</h4>
+                <span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-300 border border-blue-500/25 shrink-0">TARGET</span>
+              </div>
+              <p class="text-[11px] text-gray-400 mt-1">As-of vs latest-value joins. DEEM@SIGMOD short paper, 4 pages. Check the call when it posts; the workshop runs alongside SIGMOD in June.</p>
+            </div>
+
+            <div class="p-3 rounded-xl border border-white/5 bg-nordic-900/50">
+              <div class="flex justify-between items-start gap-2">
+                <h4 class="text-xs font-bold text-white">Thesis artifact — burst benchmark</h4>
+                <span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-gray-700/40 text-gray-300 border border-white/10 shrink-0">NOT STARTED</span>
+              </div>
+              <p class="text-[11px] text-gray-400 mt-1">The single thing that decides the KTH application. Must be a generator, not a dataset.</p>
+            </div>
+
+            <div class="p-3 rounded-xl border border-white/5 bg-nordic-900/50">
+              <div class="flex justify-between items-start gap-2">
+                <h4 class="text-xs font-bold text-white">Repo reproducibility</h4>
+                <span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-300 border border-amber-500/25 shrink-0">5 GAPS</span>
+              </div>
+              <p class="text-[11px] text-gray-400 mt-1">Manuscript source unversioned · no committed producer for the feature table · descriptive numbers have no script · figures hand-typed · unpinned deps, no LICENSE, no DOI snapshot.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Target Directory & Map Card -->
+        <section class="glass-panel rounded-2xl p-6 relative border border-white/5">
+          <h2 class="text-xl font-bold tracking-tight text-white mb-4 flex items-center gap-2">
+            <i data-lucide="map-pin" class="text-aurora-400"></i> Target Institutions
+          </h2>
+
+          <div class="space-y-4">
+            <!-- KTH -->
+            <div class="p-3 rounded-xl border border-blue-500/25 bg-blue-950/10 hover:bg-blue-950/20 transition-colors">
+              <div class="flex justify-between items-start">
+                <h3 class="font-bold text-sm text-white">KTH (Stockholm)</h3>
+                <span class="text-[9px] bg-blue-950/50 text-blue-400 border border-blue-500/20 px-1.5 py-0.5 rounded font-mono">Rank 1</span>
+              </div>
+              <p class="text-xs text-gray-400 mt-1 font-heading">Data Systems Lab · EECS / RISE</p>
+              <div class="mt-2 space-y-1">
+                <div class="flex items-center gap-1.5 text-xs text-gray-300">
+                  <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
+                  <span>Paris Carbone — lab director, Flink snapshots</span>
+                </div>
+                <div class="flex items-center gap-1.5 text-xs text-gray-300">
+                  <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
+                  <span>Jim Dowling — Hopsworks, point-in-time joins</span>
+                </div>
+              </div>
+              <p class="text-[11px] text-gray-400 mt-2 leading-relaxed">
+                ~6 PhDs + 3 research engineers. Open-source output: Apache Flink, OmniPaxos, Orb DB, Portals, ArcLang.
+                SIGMOD Systems Award 2023 for Flink. Funded via SSF, Vinnova, Digital Futures and WASP — so positions are project-tied, not proposal-driven.
+              </p>
+              <div class="mt-3 flex items-center gap-2 flex-wrap">
+                <a href="https://www.kth.se/en/eecs/skolor-och-institutioner/datavetenskap" target="_blank" class="text-[10px] text-aurora-400 hover:underline flex items-center gap-0.5">
+                  <i data-lucide="external-link" class="w-3 h-3"></i> KTH CS
+                </a>
+                <a href="https://www.ri.se/en" target="_blank" class="text-[10px] text-aurora-400 hover:underline flex items-center gap-0.5">
+                  <i data-lucide="external-link" class="w-3 h-3"></i> RISE
+                </a>
+                <a href="https://www.hopsworks.ai" target="_blank" class="text-[10px] text-aurora-400 hover:underline flex items-center gap-0.5">
+                  <i data-lucide="external-link" class="w-3 h-3"></i> Hopsworks
+                </a>
+              </div>
+            </div>
+
+            <!-- NTNU -->
+            <div class="p-3 rounded-xl border border-white/5 bg-nordic-900/50 hover:bg-nordic-900/80 transition-colors">
+              <div class="flex justify-between items-start">
+                <h3 class="font-bold text-sm text-white">NTNU (Trondheim)</h3>
+                <span class="text-[9px] bg-teal-950/50 text-teal-400 border border-teal-500/20 px-1.5 py-0.5 rounded font-mono">Rank 2</span>
+              </div>
+              <p class="text-xs text-gray-400 mt-1 font-heading">NorwAI / Dept. of CS</p>
+              <div class="mt-2 space-y-1">
+                <div class="flex items-center gap-1.5 text-xs text-gray-300">
+                  <span class="w-1.5 h-1.5 rounded-full bg-teal-400"></span>
+                  <span>Benjamin Kille (offline/online evaluation gap)</span>
+                </div>
+                <div class="flex items-center gap-1.5 text-xs text-gray-300">
+                  <span class="w-1.5 h-1.5 rounded-full bg-teal-400"></span>
+                  <span>Özlem Özgöbek (recommender systems)</span>
+                </div>
+              </div>
+              <p class="text-[11px] text-gray-400 mt-2 leading-relaxed">Still the strongest fit for the leakage work itself. Keep warm with Paper 2, but the thesis is not built for this group.</p>
+              <div class="mt-3 flex items-center gap-2">
+                <a href="https://www.ntnu.edu/idi" target="_blank" class="text-[10px] text-aurora-400 hover:underline flex items-center gap-0.5">
+                  <i data-lucide="external-link" class="w-3 h-3"></i> Visit Dept
+                </a>
+                <a href="https://www.ntnu.edu/norwai" target="_blank" class="text-[10px] text-aurora-400 hover:underline flex items-center gap-0.5">
+                  <i data-lucide="external-link" class="w-3 h-3"></i> NorwAI Center
+                </a>
+              </div>
+            </div>
+
+            <!-- Chalmers -->
+            <div class="p-3 rounded-xl border border-white/5 bg-nordic-900/50 hover:bg-nordic-900/80 transition-colors">
+              <div class="flex justify-between items-start">
+                <h3 class="font-bold text-sm text-white">Chalmers (Gothenburg)</h3>
+                <span class="text-[9px] bg-indigo-950/50 text-indigo-400 border border-indigo-500/20 px-1.5 py-0.5 rounded font-mono">Rank 3</span>
+              </div>
+              <p class="text-xs text-gray-400 mt-1 font-heading">CS &amp; Engineering — Networks &amp; Systems</p>
+              <p class="text-xs text-gray-300 mt-2 leading-relaxed">
+                Re-anchor away from recommender systems: the relevant group here is distributed computing and data-stream processing.
+                <span class="text-amber-400">To verify:</span> current faculty and active streaming projects before writing any outreach.
+              </p>
+              <div class="mt-3">
+                <a href="https://www.chalmers.se/en/departments/cse/" target="_blank" class="text-[10px] text-aurora-400 hover:underline flex items-center gap-0.5">
+                  <i data-lucide="external-link" class="w-3 h-3"></i> Visit Dept
+                </a>
+              </div>
+            </div>
+
+            <!-- UiO -->
+            <div class="p-3 rounded-xl border border-white/5 bg-nordic-900/50 hover:bg-nordic-900/80 transition-colors">
+              <div class="flex justify-between items-start">
+                <h3 class="font-bold text-sm text-white">University of Oslo (UiO)</h3>
+                <span class="text-[9px] bg-gray-800 text-gray-400 border border-gray-700 px-1.5 py-0.5 rounded font-mono">Partner</span>
+              </div>
+              <p class="text-xs text-gray-400 mt-1 font-heading">Dept. of Informatics / Schibsted axis</p>
+              <p class="text-xs text-gray-300 mt-2">
+                Strong collaboration with FINN.no &amp; Schibsted. Marketplace event data at real scale — a natural home for the burst benchmark if an industrial PhD route opens.
+              </p>
+              <div class="mt-3">
+                <a href="https://www.mn.uio.no/ifi/english/" target="_blank" class="text-[10px] text-aurora-400 hover:underline flex items-center gap-0.5">
+                  <i data-lucide="external-link" class="w-3 h-3"></i> Visit Dept
+                </a>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- Dynamic Supervisor Email outreach tool -->
+        <section class="glass-panel rounded-2xl p-6 relative border border-white/5">
+          <h2 class="text-xl font-bold tracking-tight text-white mb-2 flex items-center gap-2">
+            <i data-lucide="send" class="text-aurora-400"></i> Outreach Email Builder
+          </h2>
+          <p class="text-xs text-gray-400 mb-4">
+            Drafts lead with the artifact and the gap, not the CV. Send only once the repo link is live.
+          </p>
+
+          <!-- Input Controls -->
+          <div class="space-y-4">
+            <div>
+              <label for="supervisor-select" class="block text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1.5">Select Supervisor</label>
+              <select id="supervisor-select" onchange="generateEmail()" class="w-full text-sm rounded-lg bg-nordic-900 border-white/10 border text-white p-2.5 focus:border-aurora-500 focus:ring-aurora-500">
+                <option value="carbone">Paris Carbone (KTH) — Streaming systems, state</option>
+                <option value="dowling">Jim Dowling (KTH) — Feature stores, Hopsworks</option>
+                <option value="kille">Benjamin Kille (NTNU) — Evaluation gap</option>
+                <option value="ozgobek">Özlem Özgöbek (NTNU) — Recommender systems</option>
+                <option value="chehreghani">Morteza Haghir Chehreghani (Chalmers) — ML &amp; decision-making</option>
+              </select>
+            </div>
+
+            <!-- Subject Area -->
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <label class="block text-xs font-semibold text-gray-400 uppercase tracking-widest">Subject Draft</label>
+                <span id="copy-subject-btn" onclick="copySubject()" class="text-[10px] text-aurora-400 hover:underline cursor-pointer flex items-center gap-0.5">
+                  <i data-lucide="copy" class="w-3 h-3"></i> Copy
+                </span>
+              </div>
+              <input type="text" id="email-subject" readonly class="w-full text-xs rounded-lg bg-nordic-900/50 border-white/10 border text-gray-300 p-2 font-mono" value="">
+            </div>
+
+            <!-- Email Textbox -->
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <label class="block text-xs font-semibold text-gray-400 uppercase tracking-widest">Email Body</label>
+                <span id="copy-email-btn" onclick="copyEmailBody()" class="text-[10px] text-aurora-400 hover:underline cursor-pointer flex items-center gap-0.5">
+                  <i data-lucide="copy" class="w-3 h-3"></i> Copy Body
+                </span>
+              </div>
+              <textarea id="email-body" rows="9" readonly class="w-full text-xs rounded-lg bg-nordic-900/50 border-white/10 border text-gray-300 p-2.5 font-mono scroll-indicator leading-relaxed"></textarea>
+            </div>
+
+            <!-- CTA Actions -->
+            <div class="flex gap-2">
+              <button onclick="copyFullEmail()" class="flex-1 py-2 px-3 rounded-lg bg-nordic-800 border border-white/10 text-white text-xs font-semibold hover:bg-nordic-700 transition-colors flex items-center justify-center gap-1.5">
+                <i data-lucide="copy" class="w-3.5 h-3.5"></i> Copy Full Draft
+              </button>
+              <a id="mail-link" href="#" class="flex-1 py-2 px-3 rounded-lg bg-aurora-600 text-white text-xs font-semibold hover:bg-aurora-500 transition-colors flex items-center justify-center gap-1.5 shadow-md shadow-aurora-600/10">
+                <i data-lucide="mail" class="w-3.5 h-3.5"></i> Send Email
+              </a>
+            </div>
+          </div>
+        </section>
+
+        <!-- Materials Checklist -->
+        <section class="glass-panel rounded-2xl p-6 relative border border-white/5">
+          <h2 class="text-xl font-bold tracking-tight text-white mb-3 flex items-center gap-2">
+            <i data-lucide="file-text" class="text-aurora-400"></i> Application Materials
+          </h2>
+          <p class="text-xs text-gray-400 mb-4">
+            Package by March 2027. The repo link does more work than any other item here.
+          </p>
+
+          <div class="space-y-2">
+            <label class="flex items-center gap-2.5 p-2 rounded-lg border border-white/5 bg-nordic-900/40 hover:bg-nordic-900/80 cursor-pointer">
+              <input type="checkbox" id="check-mat-1" onchange="updateProgress()" class="rounded text-aurora-500 focus:ring-aurora-500 bg-nordic-800 border-white/10 w-4 h-4">
+              <span class="text-xs text-gray-300">Academic CV — leads with the finding and the artifact, not job titles</span>
+            </label>
+            <label class="flex items-center gap-2.5 p-2 rounded-lg border border-white/5 bg-nordic-900/40 hover:bg-nordic-900/80 cursor-pointer">
+              <input type="checkbox" id="check-mat-2" onchange="updateProgress()" class="rounded text-aurora-500 focus:ring-aurora-500 bg-nordic-800 border-white/10 w-4 h-4">
+              <span class="text-xs text-gray-300">2-page research proposal on the burst benchmark (not the leakage audit)</span>
+            </label>
+            <label class="flex items-center gap-2.5 p-2 rounded-lg border border-white/5 bg-nordic-900/40 hover:bg-nordic-900/80 cursor-pointer">
+              <input type="checkbox" id="check-mat-3" onchange="updateProgress()" class="rounded text-aurora-500 focus:ring-aurora-500 bg-nordic-800 border-white/10 w-4 h-4">
+              <span class="text-xs text-gray-300">arXiv preprint link for Paper 1 (unbranded, ownership claimed)</span>
+            </label>
+            <label class="flex items-center gap-2.5 p-2 rounded-lg border border-white/5 bg-nordic-900/40 hover:bg-nordic-900/80 cursor-pointer">
+              <input type="checkbox" id="check-mat-4" onchange="updateProgress()" class="rounded text-aurora-500 focus:ring-aurora-500 bg-nordic-800 border-white/10 w-4 h-4">
+              <span class="text-xs text-gray-300">Public benchmark repo with README and one reproducing command</span>
+            </label>
+            <label class="flex items-center gap-2.5 p-2 rounded-lg border border-white/5 bg-nordic-900/40 hover:bg-nordic-900/80 cursor-pointer">
+              <input type="checkbox" id="check-mat-5" onchange="updateProgress()" class="rounded text-aurora-500 focus:ring-aurora-500 bg-nordic-800 border-white/10 w-4 h-4">
+              <span class="text-xs text-gray-300">MSc transcript (3.84 GPA)</span>
+            </label>
+            <label class="flex items-center gap-2.5 p-2 rounded-lg border border-white/5 bg-nordic-900/40 hover:bg-nordic-900/80 cursor-pointer">
+              <input type="checkbox" id="check-mat-6" onchange="updateProgress()" class="rounded text-aurora-500 focus:ring-aurora-500 bg-nordic-800 border-white/10 w-4 h-4">
+              <span class="text-xs text-gray-300">Academic references (2–3, including Prof. Sayar)</span>
+            </label>
+            <label class="flex items-center gap-2.5 p-2 rounded-lg border border-white/5 bg-nordic-900/40 hover:bg-nordic-900/80 cursor-pointer">
+              <input type="checkbox" id="check-mat-7" onchange="updateProgress()" class="rounded text-aurora-500 focus:ring-aurora-500 bg-nordic-800 border-white/10 w-4 h-4">
+              <span class="text-xs text-gray-300">English proficiency results (TOEFL / equivalent) — check each posting's minimum</span>
+            </label>
+          </div>
+        </section>
+
+        <!-- Portals Directory -->
+        <section class="glass-panel rounded-2xl p-6 relative border border-white/5">
+          <h2 class="text-xl font-bold tracking-tight text-white mb-3 flex items-center gap-2">
+            <i data-lucide="link" class="text-aurora-400"></i> Essential Portals
+          </h2>
+          <div class="grid grid-cols-1 gap-2.5">
+            <a href="https://euraxess.ec.europa.eu/jobs" target="_blank" class="p-3 rounded-lg border border-white/5 bg-nordic-900/30 hover:border-aurora-500/30 flex justify-between items-center group transition-all">
+              <div>
+                <h4 class="text-xs font-bold text-white group-hover:text-aurora-400 transition-colors">EURAXESS Portal</h4>
+                <p class="text-[10px] text-gray-400">EU-wide research database</p>
+              </div>
+              <i data-lucide="chevron-right" class="w-4 h-4 text-gray-500 group-hover:text-aurora-400 transition-colors"></i>
+            </a>
+
+            <a href="https://academicpositions.com" target="_blank" class="p-3 rounded-lg border border-white/5 bg-nordic-900/30 hover:border-aurora-500/30 flex justify-between items-center group transition-all">
+              <div>
+                <h4 class="text-xs font-bold text-white group-hover:text-aurora-400 transition-colors">AcademicPositions</h4>
+                <p class="text-[10px] text-gray-400">Nordic filters & email alerts</p>
+              </div>
+              <i data-lucide="chevron-right" class="w-4 h-4 text-gray-500 group-hover:text-aurora-400 transition-colors"></i>
+            </a>
+
+            <a href="https://wasp-sweden.org/calls" target="_blank" class="p-3 rounded-lg border border-white/5 bg-nordic-900/30 hover:border-aurora-500/30 flex justify-between items-center group transition-all">
+              <div>
+                <h4 class="text-xs font-bold text-white group-hover:text-aurora-400 transition-colors">WASP Graduate School Calls</h4>
+                <p class="text-[10px] text-gray-400">Sweden's major AI/software funder</p>
+              </div>
+              <i data-lucide="chevron-right" class="w-4 h-4 text-gray-500 group-hover:text-aurora-400 transition-colors"></i>
+            </a>
+
+            <a href="https://www.forskningsradet.no" target="_blank" class="p-3 rounded-lg border border-white/5 bg-nordic-900/30 hover:border-aurora-500/30 flex justify-between items-center group transition-all">
+              <div>
+                <h4 class="text-xs font-bold text-white group-hover:text-aurora-400 transition-colors">RCN (Norway)</h4>
+                <p class="text-[10px] text-gray-400">Research Council Industrial PhDs</p>
+              </div>
+              <i data-lucide="chevron-right" class="w-4 h-4 text-gray-500 group-hover:text-aurora-400 transition-colors"></i>
+            </a>
+          </div>
+        </section>
+
+      </div>
+
+    </div>
+
+    <!-- ===================================================================
+         THE CHRONICLE — project history, chapter by chapter
+         =================================================================== -->
+    <section id="chronicle" class="mt-8 glass-panel rounded-2xl p-6 sm:p-8 relative border border-white/5 overflow-hidden">
+      <div class="aurora-glow -top-20 -right-20"></div>
+
+      <div class="relative z-10">
+        <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-3 mb-2">
+          <div>
+            <span class="px-3 py-1 text-[10px] font-semibold tracking-widest text-aurora-400 bg-aurora-900/30 rounded-full border border-aurora-500/30 uppercase">The Chronicle · Jun → Oct 2026</span>
+            <h2 class="mt-3 text-2xl sm:text-3xl font-extrabold tracking-tight text-white">How an AUC of 0.997 became a research identity</h2>
+          </div>
+          <p class="text-xs text-gray-400 md:text-right max-w-sm">Six chapters, one question asked over and over: <span class="text-aurora-400 font-semibold">what was knowable at time&nbsp;t?</span></p>
+        </div>
+        <p class="text-sm text-gray-300 max-w-3xl mb-6">A course project produced a near-perfect score. Taking it apart became the first paper; rebuilding it honestly became the method; the method points straight at the thesis. Every chapter left an artifact in the repo.</p>
+
+        <!-- The AUC arc -->
+        <div class="rounded-xl border border-white/5 bg-nordic-900/50 p-4 sm:p-5 mb-8">
+          <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+            <div>
+              <h3 class="text-base font-bold text-white flex items-center gap-2"><i data-lucide="activity" class="w-4 h-4 text-aurora-400"></i> The AUC arc</h3>
+              <p class="text-[11px] text-gray-400">ROC-AUC reported at each milestone. 0.5 is a coin flip, 1.0 is perfect. Hover a point; click it to open its chapter.</p>
+            </div>
+            <div class="flex items-center gap-4 text-[11px] text-gray-300" aria-label="Legend">
+              <span class="flex items-center gap-1.5"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><rect x="3" y="3" width="8" height="8" transform="rotate(45 7 7)" fill="#f43f5e" stroke="#111827" stroke-width="2"/></svg> Hindsight — features saw the outcome</span>
+              <span class="flex items-center gap-1.5"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="5" fill="#0d9488" stroke="#111827" stroke-width="2"/></svg> Point-in-time — only the past</span>
+            </div>
+          </div>
+          <div class="overflow-x-auto scroll-indicator -mx-1 px-1">
+            <div id="chron-chart" class="relative w-full min-w-[600px]">
+              <svg id="chron-svg" class="w-full h-auto block" viewBox="0 0 760 300" role="img" aria-labelledby="chron-svg-title">
+                <title id="chron-svg-title">ROC-AUC at seven project milestones, from 0.997 with leakage down to 0.61, back up to 0.71 with honest features, and 0.98 when an aggregate includes the scored session.</title>
+              </svg>
+              <div id="chron-tip" class="pointer-events-none absolute z-20 hidden max-w-[260px] rounded-lg border border-white/10 bg-nordic-800/95 px-3 py-2 text-xs text-gray-200 shadow-xl"></div>
+            </div>
+          </div>
+          <p class="sm:hidden mt-1 text-[10px] text-gray-500">Swipe sideways to see the whole arc.</p>
+          <details class="mt-3 group">
+            <summary class="cursor-pointer text-[11px] text-aurora-400 hover:text-aurora-300 select-none">View as table</summary>
+            <div class="mt-2 overflow-x-auto">
+              <table class="w-full text-[11px] text-left text-gray-300">
+                <thead class="text-gray-400 border-b border-white/10"><tr><th class="py-1 pr-3">Chapter</th><th class="py-1 pr-3">Milestone</th><th class="py-1 pr-3">When</th><th class="py-1 pr-3 text-right">ROC-AUC</th><th class="py-1">Kind</th></tr></thead>
+                <tbody id="chron-table"></tbody>
+              </table>
+            </div>
+          </details>
+        </div>
+
+        <!-- Chapters -->
+        <ol class="relative space-y-5 before:absolute before:left-[19px] before:top-3 before:bottom-3 before:w-[2px] before:bg-gradient-to-b before:from-aurora-500/40 before:via-blue-500/30 before:to-rose-500/40">
+
+          <li class="relative pl-14">
+            <span class="absolute left-0 top-0 w-10 h-10 rounded-full bg-nordic-800 border border-white/10 text-gray-400 flex items-center justify-center"><i data-lucide="scroll" class="w-4 h-4"></i></span>
+            <p class="text-[10px] uppercase tracking-widest text-gray-500 font-mono">Prologue · spring 2026</p>
+            <h3 class="text-lg font-bold text-white">A course proposal</h3>
+            <p class="text-xs text-gray-300 mt-1 max-w-3xl">Big Data &amp; Analytics with Prof. Sayar. The brief: predict whether a shopper who adds something to the cart will buy it, using the public Retail Rocket log — 2.76 million clicks over 137 days.</p>
+          </li>
+
+          <li id="chron-ch-I" class="chron-card relative pl-14 transition-all">
+            <span class="absolute left-0 top-0 w-10 h-10 rounded-full bg-teal-950 border border-teal-400/50 text-teal-300 flex items-center justify-center font-heading font-extrabold">I</span>
+            <div class="rounded-xl border border-white/5 bg-nordic-900/40 p-4 hover:border-aurora-500/30 transition-colors">
+              <div class="flex flex-wrap items-baseline justify-between gap-2">
+                <h3 class="text-lg font-bold text-white">The Build</h3>
+                <p class="text-[10px] uppercase tracking-widest text-teal-400 font-mono">15 – 17 Jun 2026</p>
+              </div>
+              <p class="text-xs text-gray-300 mt-1">Clicks grouped into 30-minute sessions, bots removed, eight session features computed. A live pipeline — Kafka → Spark → MongoDB → LSTM → dashboard — scores sessions as they stream in.</p>
+              <p class="text-xs mt-2 text-gray-400"><span class="text-teal-300 font-semibold">Lesson ·</span> a streaming system is not automatically a point-in-time system. The producer sent pre-computed session keys.</p>
+              <div class="flex flex-wrap gap-1.5 mt-3">
+                <code class="text-[10px] px-2 py-0.5 rounded bg-nordic-800 border border-white/5 text-gray-400 break-all">5-Pipeline/</code>
+                <code class="text-[10px] px-2 py-0.5 rounded bg-nordic-800 border border-white/5 text-gray-400 break-all">stage1_data_cleaning_feature_engineering.py</code>
+              </div>
+            </div>
+          </li>
+
+          <li id="chron-ch-II" class="chron-card relative pl-14 transition-all">
+            <span class="absolute left-0 top-0 w-10 h-10 rounded-full bg-rose-950 border border-rose-400/50 text-rose-300 flex items-center justify-center font-heading font-extrabold">II</span>
+            <div class="rounded-xl border border-white/5 bg-nordic-900/40 p-4 hover:border-aurora-500/30 transition-colors">
+              <div class="flex flex-wrap items-baseline justify-between gap-2">
+                <h3 class="text-lg font-bold text-white">The Score That Was Too Good</h3>
+                <p class="text-[10px] uppercase tracking-widest text-rose-400 font-mono">Jun – Jul 2026</p>
+              </div>
+              <p class="text-xs text-gray-300 mt-1">ROC-AUC 0.9969, then 0.9946 on cart sessions. Real shoppers are never that predictable. A first fix — timing recomputed without the purchase event — dropped it to 0.65–0.69, but nobody yet knew exactly why.</p>
+              <p class="text-xs mt-2 text-gray-400"><span class="text-rose-300 font-semibold">Lesson ·</span> an implausibly good score is a question, not a result.</p>
+              <div class="flex flex-wrap gap-1.5 mt-3">
+                <code class="text-[10px] px-2 py-0.5 rounded bg-nordic-800 border border-white/5 text-gray-400 break-all">offline_cart_abandonment_prediction.py</code>
+                <code class="text-[10px] px-2 py-0.5 rounded bg-nordic-800 border border-white/5 text-gray-400 break-all">train_xgboost_baseline.py</code>
+              </div>
+            </div>
+          </li>
+
+          <li id="chron-ch-III" class="chron-card relative pl-14 transition-all">
+            <span class="absolute left-0 top-0 w-10 h-10 rounded-full bg-blue-950 border border-blue-400/50 text-blue-300 flex items-center justify-center font-heading font-extrabold">III</span>
+            <div class="rounded-xl border border-white/5 bg-nordic-900/40 p-4 hover:border-aurora-500/30 transition-colors">
+              <div class="flex flex-wrap items-baseline justify-between gap-2">
+                <h3 class="text-lg font-bold text-white">The Audit</h3>
+                <p class="text-[10px] uppercase tracking-widest text-blue-400 font-mono">28 – 29 Jul 2026</p>
+              </div>
+              <p class="text-xs text-gray-300 mt-1">Every feature traced back to the raw clicks. Three culprits:</p>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-2">
+                <div class="rounded-lg bg-nordic-800/70 border border-white/5 p-2.5"><p class="text-[11px] font-semibold text-white">1 · The hidden answer</p><p class="text-[11px] text-gray-400">total − views − carts = purchases. The model just subtracted.</p></div>
+                <div class="rounded-lg bg-nordic-800/70 border border-white/5 p-2.5"><p class="text-[11px] font-semibold text-white">2 · The peek at the end</p><p class="text-[11px] text-gray-400">Session age and cart recency were measured at the purchase itself.</p></div>
+                <div class="rounded-lg bg-nordic-800/70 border border-white/5 p-2.5"><p class="text-[11px] font-semibold text-white">3 · The fuzzy label</p><p class="text-[11px] text-gray-400">"Bought A, abandoned B" counted as a purchase.</p></div>
+              </div>
+              <p class="text-xs text-gray-300 mt-2">Remove them and the score falls to ~0.61. The missing analysis script was rebuilt (19 of 20 cells reproduce), every number got a provenance row, and a <em>decision-time</em> dataset was built: features from only what had happened by each moment.</p>
+              <p class="text-xs mt-2 text-gray-400"><span class="text-blue-300 font-semibold">Lesson ·</span> the score was never measuring the task. Honest prediction at decision time sits around 0.55–0.66.</p>
+              <div class="flex flex-wrap gap-1.5 mt-3">
+                <code class="text-[10px] px-2 py-0.5 rounded bg-nordic-800 border border-white/5 text-gray-400 break-all">reanalysis_controlled_audit.py</code>
+                <code class="text-[10px] px-2 py-0.5 rounded bg-nordic-800 border border-white/5 text-gray-400 break-all">build_prefix_dataset.py</code>
+                <code class="text-[10px] px-2 py-0.5 rounded bg-nordic-800 border border-white/5 text-gray-400 break-all">docs/results_provenance.md</code>
+              </div>
+            </div>
+          </li>
+
+          <li id="chron-ch-IV" class="chron-card relative pl-14 transition-all">
+            <span class="absolute left-0 top-0 w-10 h-10 rounded-full bg-indigo-950 border border-indigo-400/50 text-indigo-300 flex items-center justify-center font-heading font-extrabold">IV</span>
+            <div class="rounded-xl border border-white/5 bg-nordic-900/40 p-4 hover:border-aurora-500/30 transition-colors">
+              <div class="flex flex-wrap items-baseline justify-between gap-2">
+                <h3 class="text-lg font-bold text-white">Into the World</h3>
+                <p class="text-[10px] uppercase tracking-widest text-indigo-400 font-mono">Aug – Sep 2026</p>
+              </div>
+              <p class="text-xs text-gray-300 mt-1">The audit became <em>"When Offline Performance Misleads"</em>. Submitted to IJACSA (MS-17-10-0048) and posted to arXiv by Prof. Sayar on 21 Sep (cs.AI). <strong class="text-white">Accepted in October.</strong> The RecSys route was dropped, and a separate thesis track opened: stream processing, KTH.</p>
+              <p class="text-xs mt-2 text-gray-400"><span class="text-indigo-300 font-semibold">Lesson ·</span> describe the finding, not the venue — 0.995 collapsing to 0.61 is the sentence people remember.</p>
+              <div class="flex flex-wrap gap-1.5 mt-3">
+                <code class="text-[10px] px-2 py-0.5 rounded bg-nordic-800 border border-white/5 text-gray-400 break-all">paper/ijacsa/</code>
+                <code class="text-[10px] px-2 py-0.5 rounded bg-nordic-800 border border-white/5 text-gray-400 break-all">paper/arxiv/</code>
+              </div>
+            </div>
+          </li>
+
+          <li id="chron-ch-V" class="chron-card relative pl-14 transition-all">
+            <span class="absolute left-0 top-0 w-10 h-10 rounded-full bg-amber-950 border border-amber-400/50 text-amber-300 flex items-center justify-center font-heading font-extrabold">V</span>
+            <div class="rounded-xl border border-white/5 bg-nordic-900/40 p-4 hover:border-aurora-500/30 transition-colors">
+              <div class="flex flex-wrap items-baseline justify-between gap-2">
+                <h3 class="text-lg font-bold text-white">The Return</h3>
+                <p class="text-[10px] uppercase tracking-widest text-amber-400 font-mono">29 Sep – 1 Oct 2026</p>
+              </div>
+              <p class="text-xs text-gray-300 mt-1">The paper source moved into the repo. One script now rebuilds the paper's data table from the raw clicks — identical to the last byte — and recomputes every number the paper quotes: 27 of 29 match. The audit, turned on its own paper, found one slip: the fuzzy-label count is <strong class="text-white">1,722 (3.9%)</strong>, not 1,745 (4.0%) — 23 sessions counted twice.</p>
+              <p class="text-xs mt-2 text-gray-400"><span class="text-amber-300 font-semibold">Lesson ·</span> reproducibility is not a chore at the end; it is how you find your own mistakes first.</p>
+              <div class="flex flex-wrap gap-1.5 mt-3">
+                <code class="text-[10px] px-2 py-0.5 rounded bg-nordic-800 border border-white/5 text-gray-400 break-all">build_cart_session_table.py</code>
+                <code class="text-[10px] px-2 py-0.5 rounded bg-nordic-800 border border-white/5 text-gray-400 break-all">completed-session__descriptive-stats.json</code>
+              </div>
+            </div>
+          </li>
+
+          <li id="chron-ch-VI" class="chron-card relative pl-14 transition-all">
+            <span class="absolute left-0 top-0 w-10 h-10 rounded-full bg-aurora-900 border border-aurora-400/60 text-aurora-100 flex items-center justify-center font-heading font-extrabold shadow-[0_0_18px_rgba(45,212,191,0.35)]">VI</span>
+            <div class="rounded-xl border border-aurora-500/20 bg-nordic-900/40 p-4 hover:border-aurora-500/40 transition-colors">
+              <div class="flex flex-wrap items-baseline justify-between gap-2">
+                <h3 class="text-lg font-bold text-white">The Fork <span class="ml-2 align-middle px-2 py-0.5 text-[10px] font-semibold text-aurora-400 bg-aurora-900/40 border border-aurora-500/30 rounded">Now</span></h3>
+                <p class="text-[10px] uppercase tracking-widest text-aurora-400 font-mono">2 Oct 2026 →</p>
+              </div>
+              <p class="text-xs text-gray-300 mt-1">First experiments for paper 2 (DEEM@SIGMOD). Freeze time at one moment — <strong class="text-white">the shopper has just put the first item in the cart</strong> — and ask: <em>will this visit end in a purchase?</em> Then add the shopper's history, counted at the right moment or the wrong one.</p>
+
+              <!-- The three-step ladder -->
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-3">
+                <div class="rounded-lg bg-nordic-800/70 border border-white/5 p-2.5">
+                  <p class="text-[10px] uppercase tracking-wider text-gray-400">Step 1 · what they did so far</p>
+                  <p class="text-xl font-heading font-extrabold text-white">0.664</p>
+                  <p class="text-[11px] text-gray-400">Clicks, time spent, items viewed. The honest starting point.</p>
+                </div>
+                <div class="rounded-lg bg-nordic-800/70 border p-2.5" style="border-color:rgba(13,148,136,.45)">
+                  <p class="text-[10px] uppercase tracking-wider" style="color:#2dd4bf">Step 2 · + history up to now ✓</p>
+                  <p class="text-xl font-heading font-extrabold text-white">0.711</p>
+                  <p class="text-[11px] text-gray-400">Their past purchases and the product's past sales, counted <em>before today</em>. Real, honest gain.</p>
+                </div>
+                <div class="rounded-lg bg-nordic-800/70 border p-2.5" style="border-color:rgba(244,63,94,.5)">
+                  <p class="text-[10px] uppercase tracking-wider" style="color:#fb7185">Step 3 · + history over all data ✗</p>
+                  <p class="text-xl font-heading font-extrabold text-white">0.977</p>
+                  <p class="text-[11px] text-gray-400">The same two facts counted over the whole dataset — <em>including today</em>. Not a better model: an accidental cheat.</p>
+                </div>
+              </div>
+
+              <!-- Why step 3 cheats: two shoppers -->
+              <div class="mt-3 rounded-lg border border-white/5 bg-nordic-800/40 p-3">
+                <p class="text-[11px] font-semibold text-white mb-1.5">Why step 3 cheats — two first-time shoppers</p>
+                <div class="overflow-x-auto">
+                  <table class="w-full text-[11px] text-gray-300">
+                    <thead class="text-gray-400"><tr><th class="text-left font-normal py-1 pr-3"></th><th class="text-center font-normal py-1 px-2">Shopper A<br><span class="text-gray-500">buys today</span></th><th class="text-center font-normal py-1 px-2">Shopper B<br><span class="text-gray-500">leaves today</span></th></tr></thead>
+                    <tbody>
+                      <tr class="border-t border-white/5"><td class="py-1 pr-3">Past purchases, counted <strong>up to now</strong> <span style="color:#2dd4bf">✓</span></td><td class="text-center font-mono">0</td><td class="text-center font-mono">0</td></tr>
+                      <tr class="border-t border-white/5"><td class="py-1 pr-3">Past purchases, counted over <strong>all the data</strong> <span style="color:#fb7185">✗</span></td><td class="text-center font-mono font-bold text-white">1</td><td class="text-center font-mono">0</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+                <p class="text-[11px] text-gray-400 mt-1.5">The wrong count includes today's purchase — the very thing being predicted. "1" simply means "buys today", so the model reads the answer off the column. Same trick as paper 1 (purchases = total − views − carts), arriving through an ordinary "customer history" table.</p>
+              </div>
+
+              <p class="text-[11px] text-white font-semibold mt-3">How much each timing mistake inflates the score <span class="font-normal text-gray-400">(extra AUC over doing it correctly)</span></p>
+              <div class="mt-1.5 space-y-1.5" aria-label="Leak size by mistake">
+                <div class="flex items-center gap-2 text-[11px]"><span class="w-44 sm:w-64 shrink-0 text-gray-300">Product info from the <strong>end</strong> of the data</span><span class="h-2 rounded-r bg-gray-500" style="width:0;min-width:2px"></span><span class="text-gray-400 whitespace-nowrap">+0.000 · harmless</span></div>
+                <div class="flex items-center gap-2 text-[11px]"><span class="w-44 sm:w-64 shrink-0 text-gray-300">Product info from the <strong>nearest week</strong> (may be after today)</span><span class="h-2 rounded-r bg-gray-500" style="width:1.35%;min-width:2px"></span><span class="text-gray-400 whitespace-nowrap">+0.008 · tiny</span></div>
+                <div class="flex items-center gap-2 text-[11px]"><span class="w-44 sm:w-64 shrink-0 text-gray-300">History over <strong>future days</strong>, today left out</span><span class="h-2 rounded-r bg-gray-500" style="width:2.5%"></span><span class="text-gray-400 whitespace-nowrap">+0.015 · small</span></div>
+                <div class="flex items-center gap-2 text-[11px]"><span class="w-44 sm:w-64 shrink-0 text-gray-300">History over <strong>everything, today included</strong></span><span class="h-2 rounded-r" style="width:45%;background:#f43f5e"></span><span class="text-gray-200 font-semibold whitespace-nowrap">+0.266 · catastrophic</span></div>
+              </div>
+              <p class="text-[10px] text-gray-500 mt-1">Step 3 − Step 2 = 0.977 − 0.711 = +0.266. Product info = weekly price/stock snapshots. All at the first add-to-cart, sessions split by date (train on earlier, test on later), XGBoost. First quick experiments — to be confirmed before the paper.</p>
+              <p class="text-xs mt-2 text-gray-300"><span class="text-white font-semibold">The message ·</span> not all timing mistakes are equal. Some do nothing, some a little — and one quietly turns an honest 0.71 into a fake 0.98.</p>
+              <p class="text-xs mt-2 text-gray-400"><span class="text-aurora-400 font-semibold">Open decision ·</span> keep paper 2 on product-snapshot joins, or widen it to <em>which point-in-time violations actually matter</em> (recommended).</p>
+              <div class="flex flex-wrap gap-1.5 mt-3">
+                <code class="text-[10px] px-2 py-0.5 rounded bg-nordic-800 border border-white/5 text-gray-400 break-all">6-Point-In-Time/probes/</code>
+                <code class="text-[10px] px-2 py-0.5 rounded bg-nordic-800 border border-white/5 text-gray-400 break-all">docs/point_in_time_log.md</code>
+              </div>
+            </div>
+          </li>
+        </ol>
+
+        <!-- Throughline -->
+        <div class="mt-8 rounded-xl border border-aurora-500/20 bg-gradient-to-r from-aurora-900/30 via-blue-950/30 to-transparent p-5">
+          <p class="text-[10px] uppercase tracking-widest text-aurora-400 font-mono mb-2">The throughline</p>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-gray-300">
+            <p><span class="text-white font-semibold">Paper 1</span> asked it of one table: which columns knew the future?</p>
+            <p><span class="text-white font-semibold">Paper 2</span> asks it of feature pipelines: which joins and aggregates cross the line, and by how much?</p>
+            <p><span class="text-white font-semibold">The thesis</span> asks it of streaming systems, where watermarks make "knowable at time t" a guarantee — under bursts, rescaling and failure.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="mt-12 text-center text-xs text-gray-500 border-t border-white/5 pt-6">
+      <p>PhD Strategy Dashboard · Babak Rad Jahanbani · Updated 2 October 2026</p>
+      <p class="mt-1 text-gray-600">KTH-first positioning · two-track research spine · runway to Autumn 2027. Progress is stored in this browser only.</p>
+    </footer>
+
+  </div>
+
+  <!-- JavaScript for Interactive Controls -->
+  <script>
+    // Lucide Icons initialization (guarded: a CDN failure must not kill the dashboard)
+    function icons() { if (window.lucide && typeof lucide.createIcons === 'function') { lucide.createIcons(); } }
+    icons();
+
+    // SWOT analysis data object
+    const swotData = {
+      strengths: {
+        title: "Strengths — Deep Dive & Positioning Strategy",
+        content: "<strong>Primary asset:</strong> 10+ years building and operating production e-commerce platforms. In a systems lab this is not 'industrial drift' — it is the one thing most applicants cannot fake. You know what a real traffic burst looks like, which keys go hot, and what breaks first.<br><br><strong>Second asset:</strong> a completed research artefact. Three leakage mechanisms identified across 43,917 cart sessions, with the honest performance measured afterwards. That is evidence you can finish research, not just start it.<br><br><strong>Action:</strong> position as the candidate who <em>builds the workload the field is missing</em>. Lead with the artifact, let the CV follow."
+      },
+      weaknesses: {
+        title: "Weaknesses — Mitigation Action Plan",
+        content: "<strong>Gap 1 — thin publication record (partly closed).</strong> Paper 1 is accepted at IJACSA (Oct 2026) and on arXiv. One paper proves you can finish; a second, in a data-systems venue, shows direction. A reader will click the arXiv or DOI link — keep both in every application.<br><br><strong>Gap 2 — venue weight.</strong> A systems committee reads venues, not counts. Mitigate by targeting a 4-page DEEM@SIGMOD short paper, and by describing findings rather than naming journals.<br><br><strong>Gap 3 — reproducibility.</strong> The manuscript source is unversioned, the feature table has no committed producer, and several published numbers have no script. Fix before anyone looks.<br><br><strong>Gap 4 — hands-on systems depth.</strong> Close it in order: replay events in Python → point-in-time join in pandas → PyFlink with real watermarks. The middle step teaches the most."
+      },
+      opportunities: {
+        title: "Opportunities — Strategic Levers",
+        content: "<strong>The open lane:</strong> the field benchmarks elastic stateful streaming on Nexmark — a synthetic auction workload inherited from an XML benchmark. It has hot-key ratios, but they are static, and it generates no bursts, no rescaling and no failures. The benefits claimed for disaggregated state are realised during exactly those events. No open retail burst benchmark exists. You can build it.<br><br><strong>The narrative lever:</strong> 'what was knowable at time t' unifies Carbone (event time, watermarks, state) and Dowling (point-in-time correct feature joins) into one story at one university.<br><br><strong>Funding lever:</strong> WASP calls and project-tied positions at the Data Systems Lab; UiO/Schibsted as an industrial route."
+      },
+      threats: {
+        title: "Threats — Risk Navigation",
+        content: "<strong>Key risk — wrong kind of evidence.</strong> A leakage audit is diagnostic; a systems lab rewards what you built. Mitigation: close the audit track in December and spend the spring on the artifact.<br><br><strong>Second risk — venue signalling.</strong> Never write 'I published in [journal]'. Write the finding: a reported AUC of 0.9947 collapsing to roughly 0.63 once leakage is removed.<br><br><strong>Third risk — cold review.</strong> Nordic positions are project-tied. A supervisor who wants you is worth more than a perfect form. Build the advocate first, apply second."
+      }
+    };
+
+    function selectSwot(type) {
+      // Highlight selected SWOT card and unhighlight others
+      ['strengths', 'weaknesses', 'opportunities', 'threats'].forEach(item => {
+        const card = document.getElementById(`swot-card-${item}`);
+        if (item === type) {
+          card.classList.remove('bg-opacity-10', 'border-white/5');
+          card.classList.add('bg-opacity-30', 'scale-[1.02]', 'ring-1', 'ring-teal-500/20');
+        } else {
+          card.classList.remove('bg-opacity-30', 'scale-[1.02]', 'ring-1', 'ring-teal-500/20');
+          card.classList.add('bg-opacity-10', 'border-white/5');
+        }
+      });
+
+      // Update deep dive panel
+      const detailTitle = document.getElementById('swot-details-title');
+      const detailContent = document.getElementById('swot-details-content');
+      
+      detailTitle.innerHTML = `<i data-lucide="info" class="w-4 h-4 text-aurora-400"></i> ${swotData[type].title}`;
+      detailContent.innerHTML = swotData[type].content;
+      icons();
+    }
+
+    // Email generator data object
+    const emailData = {
+      carbone: {
+        subject: "PhD inquiry: a realistic burst workload for elastic stateful streaming",
+        body: (name = "Dr. Carbone") => `Dear ${name},
+
+I am an MSc IT student at Bahcesehir University with 10+ years building and operating production e-commerce platforms, and I am preparing to apply for a PhD position for Autumn 2027.
+
+Reading your survey on the evolution of stream processing systems alongside the Flink 2.0 work on disaggregated state, one gap stood out to me. The benefits claimed for disaggregation are realised during disruption: checkpointing, recovery and reconfiguration. But the standard evaluation workload, Nexmark, is a synthetic auction stream that generates no traffic bursts, no rescaling and no failures, and whose key skew is a static ratio.
+
+For my MSc thesis I am building an open e-commerce burst workload generator with temporally arriving hot keys, flash-sale shapes and growing key cardinality, and measuring rescale and recovery cost under it rather than steady-state throughput. Repository and early results: [LINK]
+
+I would value your view on whether this is a gap worth filling, and would be grateful to know if positions in the Data Systems Lab are likely to open for 2027.
+
+Sincerely,\nBabak Rad Jahanbani`
+      },
+      dowling: {
+        subject: "PhD inquiry: point-in-time correctness in feature pipelines",
+        body: (name = "Dr. Dowling") => `Dear ${name},
+
+I am an MSc IT student (GPA 3.84) with 10+ years of experience engineering e-commerce data platforms, applying for PhD positions for Autumn 2027.
+
+In a recent study of a public retail dataset I identified three mechanisms by which completed-session features leak outcome information into training data. Reported AUC of 0.9947 falls to roughly 0.63 once features are recomputed at the decision point. Working through it, I realised these are not modelling errors: they are the absence of point-in-time correctness, which is exactly what Hopsworks feature joins enforce.
+
+I am now measuring a fourth channel directly: as-of joins against item-attribute snapshots versus latest-value joins, on top of the same prefix dataset. Preprint: [LINK]
+
+I would be glad to hear whether this direction fits work going on in your group, and whether vacancies are expected.
+
+Sincerely,\nBabak Rad Jahanbani`
+      },
+      kille: {
+        subject: "MSc inquiry: offline/online evaluation discrepancies in session prediction",
+        body: (name = "Dr. Kille") => `Dear ${name},
+
+I am completing an MSc in IT and exploring PhD positions for Autumn 2027. I have 10+ years of industry experience building production e-commerce systems.
+
+I recently audited a public cart-abandonment dataset and found three leakage mechanisms in completed-session features: arithmetic reconstruction of the target, endpoint timing contamination, and label ambiguity affecting 4% of sessions. Rebuilt at decision time, performance falls from 0.9947 to roughly 0.63 AUC. This sits close to your published work on offline/online evaluation discrepancies.
+
+The preprint is here: [LINK]. I would welcome any feedback, and would be grateful to know whether funded positions are expected in your group for 2027.
+
+Sincerely,\nBabak Rad Jahanbani`
+      },
+      ozgobek: {
+        subject: "PhD inquiry: evaluating purchase-intent prediction on in-progress sessions",
+        body: (name = "Dr. Özgöbek") => `Dear ${name},
+
+I am completing an MSc in IT and have 10+ years of software engineering experience in e-commerce. I am exploring PhD opportunities for Autumn 2027 and follow your work on recommender systems with interest.
+
+My recent work concerns purchase-intent prediction from in-progress sessions, and specifically how retrospective feature construction inflates offline results. Measured honestly at the decision point, performance is far lower than the literature usually reports. Preprint: [LINK]
+
+I would be grateful for the chance to introduce myself and to hear whether matching funded vacancies are coming up in your lab.
+
+Sincerely,\nBabak Rad Jahanbani`
+      },
+      chehreghani: {
+        subject: "PhD inquiry: evaluation validity in sequential prediction",
+        body: (name = "Dr. Chehreghani") => `Dear ${name},
+
+I am an MSc IT student with 10+ years of software engineering experience in e-commerce, writing to ask about PhD vacancies in your group at Chalmers.
+
+My work concerns evaluation validity in sequential prediction: how temporal leakage in retrospectively constructed features produces offline results that do not survive a decision-time rebuild. Preprint: [LINK]
+
+I am also building an open e-commerce burst workload for evaluating stateful stream processing under rescaling and recovery, which may connect to streaming work at the department.
+
+I would appreciate the chance to discuss whether there is a fit.
+
+Sincerely,\nBabak Rad Jahanbani`
+      }
+    };
+
+    function generateEmail() {
+      const selected = document.getElementById('supervisor-select').value;
+      const data = emailData[selected];
+      
+      const subjectInput = document.getElementById('email-subject');
+      const bodyTextarea = document.getElementById('email-body');
+      const mailLink = document.getElementById('mail-link');
+      
+      let profName = "Professor";
+      if (selected === 'kille') profName = "Dr. Kille";
+      if (selected === 'ozgobek') profName = "Dr. Özgöbek";
+      if (selected === 'dowling') profName = "Dr. Dowling";
+      if (selected === 'carbone') profName = "Dr. Carbone";
+      if (selected === 'chehreghani') profName = "Dr. Chehreghani";
+      
+      const bodyText = data.body(profName);
+      const subjectText = data.subject;
+      
+      subjectInput.value = subjectText;
+      bodyTextarea.value = bodyText;
+      
+      // Update Mailto Link
+      let emailAddress = "";
+      if (selected === 'kille') emailAddress = "benjamin.kille@ntnu.no";
+      if (selected === 'ozgobek') emailAddress = "ozlem.ozgobek@ntnu.no";
+      if (selected === 'dowling') emailAddress = "jdowling@kth.se";
+      if (selected === 'carbone') emailAddress = "parisc@kth.se";
+      if (selected === 'chehreghani') emailAddress = "morteza.chehreghani@chalmers.se";
+      
+      mailLink.href = `mailto:${emailAddress}?subject=${encodeURIComponent(subjectText)}&body=${encodeURIComponent(bodyText)}`;
+    }
+
+    // Copy utilities
+    function copySubject() {
+      const input = document.getElementById('email-subject');
+      navigator.clipboard.writeText(input.value).then(() => {
+        const btn = document.getElementById('copy-subject-btn');
+        btn.innerHTML = `<i data-lucide="check" class="w-3 h-3 text-emerald-400"></i> Copied!`;
+        icons();
+        setTimeout(() => {
+          btn.innerHTML = `<i data-lucide="copy" class="w-3 h-3"></i> Copy`;
+          icons();
+        }, 2000);
+      });
+    }
+
+    function copyEmailBody() {
+      const textarea = document.getElementById('email-body');
+      navigator.clipboard.writeText(textarea.value).then(() => {
+        const btn = document.getElementById('copy-email-btn');
+        btn.innerHTML = `<i data-lucide="check" class="w-3 h-3 text-emerald-400"></i> Copied!`;
+        icons();
+        setTimeout(() => {
+          btn.innerHTML = `<i data-lucide="copy" class="w-3 h-3"></i> Copy Body`;
+          icons();
+        }, 2000);
+      });
+    }
+
+    function copyFullEmail() {
+      const subject = document.getElementById('email-subject').value;
+      const body = document.getElementById('email-body').value;
+      const fullText = `Subject: ${subject}\n\n${body}`;
+      
+      navigator.clipboard.writeText(fullText).then(() => {
+        alert("Full email draft (Subject & Body) copied to clipboard!");
+      });
+    }
+
+    // LocalStorage checklist state tracking logic
+    const checkboxIds = [
+      'task-q1-1', 'task-q1-2', 'task-q1-3', 'task-q1-4',
+      'task-q2-1', 'task-q2-2', 'task-q2-3', 'task-q2-4',
+      'task-q3-1', 'task-q3-2', 'task-q3-3', 'task-q3-4',
+      'task-q4-1', 'task-q4-2', 'task-q4-3', 'task-q4-4',
+      'check-mat-1', 'check-mat-2', 'check-mat-3', 'check-mat-4', 'check-mat-5', 'check-mat-6', 'check-mat-7'
+    ];
+
+    function loadProgress() {
+      let checkedCount = 0;
+      checkboxIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const checked = localStorage.getItem(id) === 'true';
+        el.checked = checked;
+        if (checked) checkedCount++;
+      });
+      updateUI(checkedCount);
+      updateQuarterHighlights();
+    }
+
+    function updateProgress() {
+      let checkedCount = 0;
+      checkboxIds.forEach(id => {
+        const checkbox = document.getElementById(id);
+        localStorage.setItem(id, checkbox.checked);
+        if (checkbox.checked) checkedCount++;
+      });
+      updateUI(checkedCount);
+      updateQuarterHighlights();
+    }
+
+    function updateUI(checkedCount) {
+      const total = checkboxIds.length;
+      const percent = Math.round((checkedCount / total) * 100);
+      
+      document.getElementById('global-progress').innerText = `${percent}% Complete`;
+      document.getElementById('global-progress-bar').style.width = `${percent}%`;
+    }
+
+    function updateQuarterHighlights() {
+      // Highlight/dim active quarters based on current phase progression
+      const q1Tasks = ['task-q1-1', 'task-q1-2', 'task-q1-3', 'task-q1-4'];
+      const q2Tasks = ['task-q2-1', 'task-q2-2', 'task-q2-3', 'task-q2-4'];
+      const q3Tasks = ['task-q3-1', 'task-q3-2', 'task-q3-3', 'task-q3-4'];
+      const q4Tasks = ['task-q4-1', 'task-q4-2', 'task-q4-3', 'task-q4-4'];
+
+      const checkAllDone = (list) => list.every(id => document.getElementById(id).checked);
+      
+      const q1Done = checkAllDone(q1Tasks);
+      const q2Done = checkAllDone(q2Tasks);
+      const q3Done = checkAllDone(q3Tasks);
+
+      const q1El = document.getElementById('section-q1');
+      const q2El = document.getElementById('section-q2');
+      const q3El = document.getElementById('section-q3');
+      const q4El = document.getElementById('section-q4');
+
+      // Helper function to update section styles
+      const setDimmed = (el, dimmed) => {
+        if (dimmed) {
+          el.style.opacity = '0.55';
+        } else {
+          el.style.opacity = '1.0';
+        }
+      };
+
+      // If Q1 is done, dim it so focus goes to Q2, etc.
+      setDimmed(q1El, q1Done);
+      setDimmed(q2El, q2Done && q1Done);
+      setDimmed(q3El, q3Done && q2Done && q1Done);
+    }
+
+    function resetTimeline() {
+      if (confirm("Are you sure you want to reset all progress tracking?")) {
+        checkboxIds.forEach(id => {
+          localStorage.setItem(id, 'false');
+          document.getElementById(id).checked = false;
+        });
+        updateUI(0);
+        updateQuarterHighlights();
+      }
+    }
+
+    // Initialize
+    document.addEventListener("DOMContentLoaded", () => {
+      // Generate default email draft (Carbone — primary target)
+      generateEmail();
+      // Load saved progress from localStorage
+      loadProgress();
+      // Select strengths SWOT as initial state
+      selectSwot('strengths');
+      // Draw the Chronicle's AUC arc
+      drawChronicle();
+    });
+
+    // ---------------------------------------------------------------------
+    // The Chronicle — AUC arc. Every value traces to a script in the repo
+    // (docs/results_provenance.md, docs/point_in_time_log.md).
+    // ---------------------------------------------------------------------
+    const CHRON_COLORS = { leak: '#f43f5e', honest: '#0d9488' };  // validated on #111827 (dark band, CVD ΔE ≥ 10)
+    const CHRON_POINTS = [
+      { ch: 'II',  label: 'Signal check',      when: 'Jun 2026',  auc: 0.9969, kind: 'leak',   showValue: true,
+        note: 'Logistic regression on all 1.76M sessions. Total-event count lets the model subtract its way to the label.' },
+      { ch: 'II',  label: 'Cart benchmark',    when: 'Jun 2026',  auc: 0.9946, kind: 'leak',
+        note: 'XGBoost on 43,917 cart sessions. The explicit count is gone, but session age and cart recency still end at the purchase.' },
+      { ch: 'II',  label: 'First fix',         when: '23 Jun',    auc: 0.686,  kind: 'leak',
+        note: 'Timing recomputed without the purchase event. Better, yet still measured over the finished session.' },
+      { ch: 'III', label: 'Controlled audit',  when: '29 Jul',    auc: 0.6065, kind: 'leak',   showValue: true,
+        note: 'Counts only, five holdouts. The near-perfect score is gone; what remains still summarises finished sessions.' },
+      { ch: 'III', label: 'Decision time',     when: '29 Jul → 2 Oct', auc: 0.664, kind: 'honest',
+        note: 'XGBoost at the first add-to-cart, temporal split. Features use only what had happened by then.' },
+      { ch: 'VI',  label: '+ as-of history',   when: '2 Oct',     auc: 0.711,  kind: 'honest', showValue: true,
+        note: "Added: the shopper's past purchases and how often this product sold before, both counted only up to this moment. An honest gain." },
+      { ch: 'VI',  label: 'The trap',          when: '2 Oct',     auc: 0.977,  kind: 'leak',   showValue: true,
+        note: 'The same two facts counted over all the data, including today. A shopper who buys today gets "1 past purchase", so the answer leaks into the feature.' },
+    ];
+    const CHRON_BANDS = [
+      { ch: 'II',  name: 'II · Too good', from: 0, to: 2 },
+      { ch: 'III', name: 'III · Audit',   from: 3, to: 4 },
+      { ch: 'VI',  name: 'VI · Fork',     from: 5, to: 6 },
+    ];
+
+    function drawChronicle() {
+      const svg = document.getElementById('chron-svg');
+      if (!svg) return;
+      const NS = 'http://www.w3.org/2000/svg';
+      const W = 760, H = 300, m = { l: 44, r: 20, t: 22, b: 62 };
+      const pw = W - m.l - m.r, ph = H - m.t - m.b;
+      const n = CHRON_POINTS.length;
+      const gapAfter = 4;                       // chapters IV–V have no AUC milestone
+      const step = (pw - 60) / (n - 1 + 0.6);   // extra room for the IV–V break
+      const x = i => m.l + 30 + i * step + (i > gapAfter ? 0.6 * step : 0);
+      const y = v => m.t + (1 - (v - 0.5) / 0.5) * ph;
+      const el = (tag, attrs, parent) => {
+        const e = document.createElementNS(NS, tag);
+        for (const k in attrs) e.setAttribute(k, attrs[k]);
+        (parent || svg).appendChild(e);
+        return e;
+      };
+      const text = (str, attrs, parent) => { const t = el('text', attrs, parent); t.textContent = str; return t; };
+
+      // chapter bands (recessive)
+      CHRON_BANDS.forEach(b => {
+        const x0 = x(b.from) - step * 0.42, x1 = x(b.to) + step * 0.42;
+        el('rect', { x: x0, y: m.t, width: x1 - x0, height: ph, rx: 8, fill: 'rgba(255,255,255,0.025)' });
+        text(b.name, { x: (x0 + x1) / 2, y: H - 10, 'text-anchor': 'middle', fill: '#9ca3af', 'font-size': 11, 'font-family': 'Outfit, sans-serif', 'font-weight': 600 });
+      });
+      // IV–V break marker
+      const bx = (x(gapAfter) + x(gapAfter + 1)) / 2;
+      el('line', { x1: bx, x2: bx, y1: m.t + 6, y2: m.t + ph, stroke: 'rgba(255,255,255,0.12)', 'stroke-dasharray': '2 4' });
+      text('IV–V', { x: bx, y: H - 24, 'text-anchor': 'middle', fill: '#6b7280', 'font-size': 10, 'font-family': 'Inter, sans-serif' });
+      text('paper out,', { x: bx, y: m.t + 14, 'text-anchor': 'middle', fill: '#6b7280', 'font-size': 9.5 });
+      text('repo rebuilt', { x: bx, y: m.t + 26, 'text-anchor': 'middle', fill: '#6b7280', 'font-size': 9.5 });
+
+      // grid + y axis
+      [0.5, 0.6, 0.7, 0.8, 0.9, 1.0].forEach(v => {
+        el('line', { x1: m.l, x2: W - m.r, y1: y(v), y2: y(v), stroke: v === 0.5 ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.06)', 'stroke-dasharray': v === 0.5 ? '4 4' : '' });
+        text(v.toFixed(1), { x: m.l - 8, y: y(v) + 3.5, 'text-anchor': 'end', fill: '#6b7280', 'font-size': 10 });
+      });
+      text('coin flip', { x: W - m.r, y: y(0.5) - 5, 'text-anchor': 'end', fill: '#6b7280', 'font-size': 9.5 });
+
+      // connector: the order the story was told, not a measured series
+      const d = CHRON_POINTS.map((p, i) => `${i ? 'L' : 'M'}${x(i)},${y(p.auc)}`).join(' ');
+      el('path', { d, fill: 'none', stroke: '#4b5563', 'stroke-width': 2, 'stroke-linejoin': 'round' });
+
+      // milestone labels under the plot
+      CHRON_POINTS.forEach((p, i) => {
+        text(p.label, { x: x(i), y: m.t + ph + 16, 'text-anchor': 'middle', fill: '#d1d5db', 'font-size': 10 });
+      });
+
+      // marks
+      const tip = document.getElementById('chron-tip');
+      const box = document.getElementById('chron-chart');
+      CHRON_POINTS.forEach((p, i) => {
+        const cx = x(i), cy = y(p.auc), c = CHRON_COLORS[p.kind];
+        const g = el('g', { tabindex: 0, role: 'button', 'aria-label': `${p.label}, ${p.when}: ROC-AUC ${p.auc}. Open chapter ${p.ch}.`, style: 'cursor:pointer;outline:none' });
+        el('circle', { cx, cy, r: 16, fill: 'transparent' }, g);  // generous hit target
+        const ring = el('circle', { cx, cy, r: 13, fill: 'none', stroke: c, 'stroke-width': 1.5, opacity: 0 }, g);
+        if (p.kind === 'leak') {
+          el('rect', { x: cx - 5.5, y: cy - 5.5, width: 11, height: 11, transform: `rotate(45 ${cx} ${cy})`, fill: c, stroke: '#111827', 'stroke-width': 2 }, g);
+        } else {
+          el('circle', { cx, cy, r: 6.5, fill: c, stroke: '#111827', 'stroke-width': 2 }, g);
+        }
+        if (p.showValue) {
+          const above = p.auc < 0.9;
+          text(p.auc.toFixed(3), { x: cx, y: above ? cy - 14 : cy + 22, 'text-anchor': 'middle', fill: '#f3f4f6', 'font-size': 11, 'font-weight': 600 }, g);
+        }
+
+        const show = () => {
+          ring.setAttribute('opacity', 1);
+          tip.innerHTML = '';
+          const h = document.createElement('p'); h.className = 'font-semibold text-white';
+          h.textContent = `${p.label} · ${p.auc.toFixed(p.auc > 0.99 ? 4 : 3)}`;
+          const s = document.createElement('p'); s.className = 'text-[10px] uppercase tracking-wider mb-1';
+          s.style.color = c; s.textContent = `Chapter ${p.ch} · ${p.when} · ${p.kind === 'leak' ? 'hindsight' : 'point-in-time'}`;
+          const t = document.createElement('p'); t.className = 'text-gray-300 leading-snug'; t.textContent = p.note;
+          tip.append(h, s, t);
+          tip.classList.remove('hidden');
+          const r = box.getBoundingClientRect(), k = r.width / W;
+          let left = cx * k + 14, top = cy * k - 10;
+          if (left + 260 > r.width) left = cx * k - 14 - Math.min(260, tip.offsetWidth);
+          tip.style.left = Math.max(0, left) + 'px';
+          tip.style.top = Math.max(0, top) + 'px';
+        };
+        const hide = () => { ring.setAttribute('opacity', 0); tip.classList.add('hidden'); };
+        const open = () => openChapter(p.ch);
+        g.addEventListener('mouseenter', show);
+        g.addEventListener('mouseleave', hide);
+        g.addEventListener('focus', show);
+        g.addEventListener('blur', hide);
+        g.addEventListener('click', open);
+        g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+      });
+
+      // table view
+      const tb = document.getElementById('chron-table');
+      CHRON_POINTS.forEach(p => {
+        const tr = document.createElement('tr'); tr.className = 'border-b border-white/5';
+        [p.ch, p.label, p.when, p.auc.toFixed(p.auc > 0.99 ? 4 : 3), p.kind === 'leak' ? 'Hindsight' : 'Point-in-time'].forEach((v, j) => {
+          const td = document.createElement('td'); td.className = 'py-1 pr-3' + (j === 3 ? ' text-right font-mono' : ''); td.textContent = v; tr.appendChild(td);
+        });
+        tb.appendChild(tr);
+      });
+    }
+
+    function openChapter(ch) {
+      const card = document.getElementById('chron-ch-' + ch);
+      if (!card) return;
+      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      const inner = card.querySelector('div');
+      inner.classList.add('ring-2', 'ring-aurora-400/60');
+      setTimeout(() => inner.classList.remove('ring-2', 'ring-aurora-400/60'), 1800);
+    }
+  </script>
+</body>
+</html>
