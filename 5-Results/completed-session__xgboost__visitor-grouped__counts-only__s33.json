@@ -1,0 +1,21 @@
+{
+  "config": "counts_only",
+  "features": [
+    "view_count",
+    "addtocart_count",
+    "view_to_cart_ratio",
+    "unique_items_count"
+  ],
+  "seed": 33,
+  "split": "visitor-grouped",
+  "model": "XGB",
+  "n_train": 35228,
+  "n_test": 8689,
+  "test_positive_rate": 0.2686154908505006,
+  "roc_auc": 0.620210253516417,
+  "pr_auc": 0.3984462843487499,
+  "accuracy": 0.6328691448958453,
+  "precision": 0.3607677293428757,
+  "recall": 0.47514995715509856,
+  "f1": 0.41013313609467456
+}

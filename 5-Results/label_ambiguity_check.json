@@ -1,0 +1,144 @@
+{
+  "stats": {
+    "cart_sessions": 43917,
+    "purchased_sessions": 11932,
+    "before_first_cart": 172,
+    "between_first_and_last_cart": 1573,
+    "before_and_between_overlap": 23,
+    "timing_ambiguous_distinct": 1722,
+    "timing_ambiguous_pct": 3.92,
+    "timing_ambiguous_verified_mixed": 753,
+    "timing_ambiguous_all_carted_items_bought": 969,
+    "purchased_with_mixed_outcome": 1354,
+    "purchased_with_mixed_outcome_pct_of_purchased": 11.35,
+    "purchased_with_mixed_outcome_pct_of_all": 3.08
+  },
+  "table5_effect": {
+    "full": {
+      "target_proxy/LR": {
+        "roc_auc_mean": 0.9944037904235982,
+        "roc_auc_sd": 0.0004114221747909132,
+        "pr_auc_mean": 0.9525120545553275
+      },
+      "target_proxy/XGB": {
+        "roc_auc_mean": 0.9996841706604851,
+        "roc_auc_sd": 7.759760119514477e-05,
+        "pr_auc_mean": 0.9991756951143287
+      },
+      "original_completed/LR": {
+        "roc_auc_mean": 0.8306149477404148,
+        "roc_auc_sd": 0.0035895410725710754,
+        "pr_auc_mean": 0.6123333256324195
+      },
+      "original_completed/XGB": {
+        "roc_auc_mean": 0.9948447569716613,
+        "roc_auc_sd": 0.0004332728142294729,
+        "pr_auc_mean": 0.9876848872617199
+      },
+      "timing_only/LR": {
+        "roc_auc_mean": 0.8006312984871483,
+        "roc_auc_sd": 0.003207851278813938,
+        "pr_auc_mean": 0.5476268059110925
+      },
+      "timing_only/XGB": {
+        "roc_auc_mean": 0.8694832143706869,
+        "roc_auc_sd": 0.003064377380154762,
+        "pr_auc_mean": 0.6563094127989719
+      },
+      "counts_only/LR": {
+        "roc_auc_mean": 0.6061039884439966,
+        "roc_auc_sd": 0.003526479696052948,
+        "pr_auc_mean": 0.3895196319180603
+      },
+      "counts_only/XGB": {
+        "roc_auc_mean": 0.6061011854962649,
+        "roc_auc_sd": 0.003459433382836315,
+        "pr_auc_mean": 0.3942760820807955
+      }
+    },
+    "without_timing_ambiguous": {
+      "target_proxy/LR": {
+        "roc_auc_mean": 0.9886298165291425,
+        "roc_auc_sd": 0.0011068466728892405,
+        "pr_auc_mean": 0.9184446554650911
+      },
+      "target_proxy/XGB": {
+        "roc_auc_mean": 0.9997747092210982,
+        "roc_auc_sd": 7.759808752640194e-05,
+        "pr_auc_mean": 0.9993339732033713
+      },
+      "original_completed/LR": {
+        "roc_auc_mean": 0.8245279029393217,
+        "roc_auc_sd": 0.0049131189758589025,
+        "pr_auc_mean": 0.534280259463127
+      },
+      "original_completed/XGB": {
+        "roc_auc_mean": 0.9960604926678872,
+        "roc_auc_sd": 0.00036994028359222417,
+        "pr_auc_mean": 0.9890739261519194
+      },
+      "timing_only/LR": {
+        "roc_auc_mean": 0.8078346439634029,
+        "roc_auc_sd": 0.003229495666087329,
+        "pr_auc_mean": 0.4793560790921422
+      },
+      "timing_only/XGB": {
+        "roc_auc_mean": 0.8693008031893011,
+        "roc_auc_sd": 0.003986336366305025,
+        "pr_auc_mean": 0.5866961611368356
+      },
+      "counts_only/LR": {
+        "roc_auc_mean": 0.5778365363783863,
+        "roc_auc_sd": 0.003690086211215156,
+        "pr_auc_mean": 0.29193674890669763
+      },
+      "counts_only/XGB": {
+        "roc_auc_mean": 0.5792813936870812,
+        "roc_auc_sd": 0.004971549695765548,
+        "pr_auc_mean": 0.29243308463606094
+      }
+    },
+    "without_mixed_outcome": {
+      "target_proxy/LR": {
+        "roc_auc_mean": 0.9848479305487302,
+        "roc_auc_sd": 0.0010694829707949417,
+        "pr_auc_mean": 0.918241345720425
+      },
+      "target_proxy/XGB": {
+        "roc_auc_mean": 0.9997639488973595,
+        "roc_auc_sd": 0.00016496879700072782,
+        "pr_auc_mean": 0.9993697827602244
+      },
+      "original_completed/LR": {
+        "roc_auc_mean": 0.824490981565378,
+        "roc_auc_sd": 0.003938384975368405,
+        "pr_auc_mean": 0.5512728986885224
+      },
+      "original_completed/XGB": {
+        "roc_auc_mean": 0.995514652278227,
+        "roc_auc_sd": 0.0007210316519826455,
+        "pr_auc_mean": 0.9892128345302303
+      },
+      "timing_only/LR": {
+        "roc_auc_mean": 0.7936416984804728,
+        "roc_auc_sd": 0.003592990835613621,
+        "pr_auc_mean": 0.48212286708975094
+      },
+      "timing_only/XGB": {
+        "roc_auc_mean": 0.8690567530325681,
+        "roc_auc_sd": 0.004004980022219241,
+        "pr_auc_mean": 0.6115799970719265
+      },
+      "counts_only/LR": {
+        "roc_auc_mean": 0.5851331688146588,
+        "roc_auc_sd": 0.00617574456533519,
+        "pr_auc_mean": 0.3084151960133014
+      },
+      "counts_only/XGB": {
+        "roc_auc_mean": 0.5951189165053444,
+        "roc_auc_sd": 0.007007937433660143,
+        "pr_auc_mean": 0.3247773322362851
+      }
+    }
+  }
+}

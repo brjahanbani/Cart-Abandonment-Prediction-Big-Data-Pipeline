@@ -1,0 +1,24 @@
+{
+  "config": "original_completed",
+  "features": [
+    "view_count",
+    "addtocart_count",
+    "view_to_cart_ratio",
+    "unique_items_count",
+    "session_age_seconds",
+    "inter_event_interval_mean",
+    "recency_last_cart_seconds"
+  ],
+  "seed": 42,
+  "split": "visitor-grouped",
+  "model": "LR",
+  "n_train": 35212,
+  "n_test": 8705,
+  "test_positive_rate": 0.269959793222286,
+  "roc_auc": 0.8356745735473828,
+  "pr_auc": 0.6213094756099344,
+  "accuracy": 0.7860999425617461,
+  "precision": 0.6084444444444445,
+  "recall": 0.5825531914893617,
+  "f1": 0.5952173913043478
+}

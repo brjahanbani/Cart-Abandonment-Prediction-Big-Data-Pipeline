@@ -1,0 +1,20 @@
+{
+  "config": "target_proxy",
+  "features": [
+    "event_count",
+    "view_count",
+    "addtocart_count"
+  ],
+  "seed": 11,
+  "split": "temporal",
+  "model": "XGB",
+  "n_train": 35134,
+  "n_test": 8783,
+  "test_positive_rate": 0.2684731868382102,
+  "roc_auc": 0.9997372963303994,
+  "pr_auc": 0.9993269585691624,
+  "accuracy": 0.9949903222133667,
+  "precision": 0.9898391193903472,
+  "recall": 0.991518235793045,
+  "f1": 0.9906779661016949
+}

@@ -1,0 +1,21 @@
+{
+  "config": "counts_only",
+  "features": [
+    "view_count",
+    "addtocart_count",
+    "view_to_cart_ratio",
+    "unique_items_count"
+  ],
+  "seed": 33,
+  "split": "temporal",
+  "model": "LR",
+  "n_train": 35134,
+  "n_test": 8783,
+  "test_positive_rate": 0.2684731868382102,
+  "roc_auc": 0.620030791774339,
+  "pr_auc": 0.39585182934685864,
+  "accuracy": 0.7032904474553114,
+  "precision": 0.4227895392278954,
+  "recall": 0.2879558948261238,
+  "f1": 0.3425832492431887
+}

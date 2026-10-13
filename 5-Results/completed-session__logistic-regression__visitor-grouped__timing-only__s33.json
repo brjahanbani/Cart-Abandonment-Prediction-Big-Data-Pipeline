@@ -1,0 +1,20 @@
+{
+  "config": "timing_only",
+  "features": [
+    "session_age_seconds",
+    "inter_event_interval_mean",
+    "recency_last_cart_seconds"
+  ],
+  "seed": 33,
+  "split": "visitor-grouped",
+  "model": "LR",
+  "n_train": 35228,
+  "n_test": 8689,
+  "test_positive_rate": 0.2686154908505006,
+  "roc_auc": 0.8059535872744913,
+  "pr_auc": 0.55198686511935,
+  "accuracy": 0.7400161123259293,
+  "precision": 0.5147116516280894,
+  "recall": 0.5621251071122536,
+  "f1": 0.5373745648167111
+}

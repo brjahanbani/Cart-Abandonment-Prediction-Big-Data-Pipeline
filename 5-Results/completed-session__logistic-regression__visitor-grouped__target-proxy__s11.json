@@ -1,0 +1,20 @@
+{
+  "config": "target_proxy",
+  "features": [
+    "event_count",
+    "view_count",
+    "addtocart_count"
+  ],
+  "seed": 11,
+  "split": "visitor-grouped",
+  "model": "LR",
+  "n_train": 35182,
+  "n_test": 8735,
+  "test_positive_rate": 0.26708643388666287,
+  "roc_auc": 0.9936852673959448,
+  "pr_auc": 0.9453576698056401,
+  "accuracy": 0.9933600457927876,
+  "precision": 0.9773394880402854,
+  "recall": 0.9982854693527646,
+  "f1": 0.9877014418999152
+}

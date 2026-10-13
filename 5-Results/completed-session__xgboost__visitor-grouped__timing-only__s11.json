@@ -1,0 +1,20 @@
+{
+  "config": "timing_only",
+  "features": [
+    "session_age_seconds",
+    "inter_event_interval_mean",
+    "recency_last_cart_seconds"
+  ],
+  "seed": 11,
+  "split": "visitor-grouped",
+  "model": "XGB",
+  "n_train": 35182,
+  "n_test": 8735,
+  "test_positive_rate": 0.26708643388666287,
+  "roc_auc": 0.8645780231290237,
+  "pr_auc": 0.6359642994502296,
+  "accuracy": 0.7587864911276474,
+  "precision": 0.528391959798995,
+  "recall": 0.9014144877839692,
+  "f1": 0.666244257880564
+}
