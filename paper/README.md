@@ -2,7 +2,7 @@
 
 "When Offline Performance Misleads: A Leakage Audit of Completed-Session
 Features for Cart-Abandonment Prediction" — Babak Rad Jahanbani, Ahmet Sayar.
-Corresponding author: babakrad.jahanbani@bahcesehir.edu.tr.
+Corresponding author: babakrad.jahanbani@bahcesehir.edu.tr (ORCID [0009-0001-6910-9747](https://orcid.org/0009-0001-6910-9747)).
 
 ## Status (as of 2026-10-17)
 
