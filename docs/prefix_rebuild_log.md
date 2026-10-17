@@ -295,10 +295,10 @@ LR under the temporal split is deterministic (sd = 0 across seeds).
       every descriptive number in the paper — done 2026-10-01,
       `2-Completed-Session/build_cart_session_table.py` (table byte-identical;
       see `docs/results_provenance.md` § Descriptive-statistics check).
-- [ ] **Paper error found:** label-ambiguity total is 1,722 (3.9%), not
-      1,745 (4.0%) — 23 sessions double-counted. The paper was accepted
-      (October 2026): correct it in the **camera-ready** version (Abstract and
-      §IV-C), then in an arXiv v2 and the extension paper.
+- [x] **Paper error found:** label-ambiguity total is 1,722 (3.9%), not
+      1,745 (4.0%) — 23 sessions double-counted. Corrected in the
+      camera-ready version (2026-10-14), which also adds the item-verified
+      count 1,354 (3.1%). Still to do: carry the correction into an arXiv v2.
 
 ## 2026-10-12 — Paper 1 accepted
 
@@ -309,3 +309,15 @@ after registration. Next for this paper: read the reviewer feedback, prepare
 the camera-ready version with the 1,722 / 3.9% correction, then record the
 DOI in `paper/README.md` and add it to the arXiv entry as the journal
 reference.
+
+## 2026-10-14 → 2026-10-17 — Camera-ready revision
+
+Both reviews addressed in `paper/camera-ready/` (14 of 16 points fully; the
+two requests for validation on other datasets were answered by narrowing the
+claims). New experiments: `reanalysis_split_robustness.py` (visitor-grouped
+and chronological splits) and `label_ambiguity_check.py` (item-level label
+verification); the k=0 decision-time results from `train_prefix_models.py`
+were added to the paper. Published Tables IV–V unchanged (renumbered V–VI);
+8 → 10 pages. Submitted; IJACSA confirmed the paper is in the production
+queue on 2026-10-17. Mapping of every comment to its change:
+`paper/camera-ready/RESPONSE_TO_REVIEWERS.md`.

@@ -8,7 +8,7 @@ Corresponding author: babakrad.jahanbani@bahcesehir.edu.tr.
 
 | Venue | Status |
 |---|---|
-| IJACSA (thesai.org) | Manuscript **MS-17-10-0048**, **accepted for publication** (acceptance email October 2026). Registration fee paid (split equally between both authors; the university is expected to reimburse in January 2027). Reviewer feedback is released after registration. Still to come: reviewer feedback → camera-ready → DOI. |
+| IJACSA (thesai.org) | Manuscript **MS-17-10-0048**, **accepted for publication** (acceptance email October 2026). Registration fee paid (split equally between both authors; the university is expected to reimburse in January 2027). **Camera-ready submitted** (deadline 16 Oct 2026, 15:40) and confirmed **in the production queue** on 2026-10-17. Source: `camera-ready/`; reviewer responses: `camera-ready/RESPONSE_TO_REVIEWERS.md`. Still to come: publication notice → DOI. |
 | arXiv | **Submitted 2026-09-21** by Prof. Ahmet Sayar, category cs.AI, submission ID `submit/8109238`. The public `arXiv:YYMM.NNNNN` identifier is not recorded here yet — add it once announced. |
 
 ## Contents
