@@ -9,6 +9,7 @@ events_clean.csv
 # (kept locally as the reference the build checks against; not published)
 paper/build/
 paper/ijacsa/submitted-pdf/
+paper/camera-ready/Submitted Files/*.pdf
 
 # Python
 __pycache__/

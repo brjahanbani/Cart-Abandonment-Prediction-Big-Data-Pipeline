@@ -4,7 +4,7 @@
 Features for Cart-Abandonment Prediction" — Babak Rad Jahanbani, Ahmet Sayar.
 Corresponding author: babakrad.jahanbani@bahcesehir.edu.tr.
 
-## Status (as of 2026-10-12)
+## Status (as of 2026-10-17)
 
 | Venue | Status |
 |---|---|
@@ -18,7 +18,9 @@ Corresponding author: babakrad.jahanbani@bahcesehir.edu.tr.
 | `ijacsa/` | IJACSA-template source (non-blind + anonymized), `IEEEtran.cls`, `references_revised.bib`, as provided by the author 2026-09-29. | **No** — record of the IJACSA submission |
 | `ijacsa/submitted-pdf/` | The two PDFs sent to IJACSA. Gitignored (journal-branded review copies); kept locally so builds can be checked against them. | No |
 | `arxiv/` | **The arXiv submission of 2026-09-21**, as provided by the author: source `IJACSA_Final_NonBlind.tex` + `.bbl` + `IEEEtran.cls` + `references_revised.bib`; `arXiv.pdf` (arXiv's compiled PDF, with the `arXiv:submit/8109238 [cs.AI] 21 Sep 2026` stamp); `arXiv_Preprint_Cart_Abandonment_Leakage_Audit.pdf` (the same source compiled with pdfTeX 1.40.25, no stamp). | **No** — record of the arXiv submission |
-| `arxiv-v2/main.tex` | A cleaner unbranded variant prepared 2026-09-29, after the arXiv submission. Candidate source for an arXiv replacement (v2) only. | Yes |
+| `camera-ready/` | Working copy of the camera-ready revision (2026-10-14): `IJACSA_CameraReady_MS-17-10-0048.tex`, `references_revised.bib`, `IEEEtran.cls`, and `RESPONSE_TO_REVIEWERS.md` (every reviewer comment → change → location). Baseline commit `fc209dc` = unchanged copy of `ijacsa/` non-blind source, so `git diff fc209dc -- paper/camera-ready` shows every revision. | Superseded by `Submitted Files/` |
+| `camera-ready/Submitted Files/` | **What was uploaded to IJACSA** (deadline 16 Oct 2026, 15:40; in production queue 2026-10-17), as provided by the author: `.tex`, `.bib`, `.bbl`, `IEEEtran.cls`, and the Overleaf-built PDF. Verified 2026-10-17: `.tex` and `.bib` byte-identical to the working copy; `IEEEtran.cls` identical apart from line endings; PDF built with pdfTeX 1.40.25, 10 pages, no unresolved references, author names exact, contains the corrected 1,354 (3.1%) and no 1,745. The PDF is gitignored (journal-branded), like `ijacsa/submitted-pdf/`. | **No** — record of the camera-ready submission |
+| `arxiv-v2/main.tex` | A cleaner unbranded variant prepared 2026-09-29, after the arXiv submission, from the *pre-review* source. Superseded for content: an arXiv v2 should be built from `camera-ready/Submitted Files/` with the IJACSA header/footer removed, so it carries the reviewer revisions and the corrected counts. | Yes |
 | `build.py` | Builds `ijacsa-nonblind`, `ijacsa-anon` and `arxiv` (= `arxiv-v2/main.tex`) into `build/` (gitignored), checks the arXiv-v2 target, writes `build/arxiv-upload.zip`. | Yes |
 
 ## Provenance
